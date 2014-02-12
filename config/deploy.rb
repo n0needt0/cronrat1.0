@@ -5,7 +5,7 @@ set :use_sudo, true
 
 set :keep_releases, 2
 
-set :application_name, "base"
+set :application_name, "cronrat"
 
 set :user, Capistrano::CLI.ui.ask("User for deploy:")
 set :password, Capistrano::CLI.ui.ask("Password for user #{user}:"){|q|q.echo = false}
@@ -13,7 +13,7 @@ set :ssh_options, {:user => user, :password => password, :forward_agent => true 
 set :scm, "git"
 set :user, "#{user}"
 set :scm_passphrase, "#{password}"
-set :repository, "https://github.com/n0needt0/base"
+set :repository, "https://github.com/n0needt0/cronrat"
 
 #set :scm_command, "git_umask"
 set :branch, "master"
