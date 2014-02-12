@@ -46,15 +46,6 @@ return array(
 
 	'connections' => array(
 
-      'emds' => array(
-			'driver'   => 'sqlsrv',
-			'host'     => '10.10.0.176:1433',
-			'database' => 'TopsData',
-			'username' => 'apps',
-			'password' => 'n0needt0',
-			'prefix'   => '',
-		),
-
 		'base' => array(
 			'driver'    => 'mysql',
 			'host'      => '127.0.0.1',
@@ -64,18 +55,7 @@ return array(
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
-		),
-
-  'billtrac' => array(
-			'driver'    => 'mysql',
-			'host'      => 'billtrac.helppain.net',
-			'database'  => 'billtrac',
-			'username'  => 'trac',
-			'password'  => 'trac',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => '',
-		),
+		)
 	),
 
 	/*

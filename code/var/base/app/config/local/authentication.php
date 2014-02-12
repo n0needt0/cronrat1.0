@@ -2,5 +2,5 @@
 
 return array(
                 'radius'=>false,
-                'domain'=>'helppain.net'
+                'domain'=>'cronrat.com'
                 );

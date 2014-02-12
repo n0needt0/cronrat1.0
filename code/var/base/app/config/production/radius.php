@@ -1,7 +1,7 @@
 <?php
 return array(
-    'server' => '10.10.0.25',
+    'server' => '0.0.0.0',
     'port' => '1812',
     'suffix' => '',
-    'secret' => 'testing123'
+    'secret' => ''
 );

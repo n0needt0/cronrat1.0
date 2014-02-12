@@ -3,94 +3,12 @@
 return array(
 /************************************************************/
 /*******************APP SPECIFIC***************************/
-'copyright' => 'My Computer',
-
-'emdtobilltrac'=>array(
-    'alpha_owner'=>array(
-                            array('start'=>'a', 'end'=>'z', 'owner'=>'jalvarado')
-                    ),
-    'insurance_owner'=>array(
-                            array('pattern'=>'liberty', 'owner'=>'ktrylovich ')
-                    ),
-    'db_write' => false,
-    'db_delete'=>false
-                ),
-
-'locationmap'=>array(
-                'Help Pain Fresno'=>'fresno',
-                'Help Pain Medical Network'=>'san mateo',
-                'Help Pain Salinas'=>'salinas'
-                ),
-
-
-'validservices'=>array(
-                'consult'=>array(),
-                'detox'=>array('note'=>'Detox IN', 'price_check'=>array('operator'=>'mod', 'value'=>2000)),
-                'evaluation'=>array(),
-                'follow Up'=>array(),
-                'help remote care'=>array(),
-                'program'=>array(),
-                'refill'=>array(),
-                'other'=>array(),
-                'letter'=>array(),
-                'injection'=>array(),
-                'follow up'=>array(),
-                'hospital'=>array('note'=>'SCIPP or MILLS or Stanford', 'price_check'=>array('operator'=>'mod', 'value'=>2000)),
-                'reassessment'=>array(),
-                'permanent & stationary report'=>array()
-                ),
-
-'emails' =>array(
-                            'admin'=>'ayasinsky@helppain.net',
-                            'billing'=>array('sglenn@helppain.net', 'jcarey@helppain.net')
-                                           ),
-
-'emdtonetsuite'=>array(
-                                        'subsidiary'=>7, //helppain
-                                        'defaultreceivables'=>408,
-                                        'hardstoponerrors'=>false,
-
-                                        'invoice'=>array('account'=>351,
-                                                                   'taxItem'=>-7,
-                                                                   'subsidiary'=>7,
-                                                                   'prefix'=>'EMD',
-                                                                   'price'=>-1        //custom
-                                                        ),
-                                         'location'=>array(
-                                                                     'HPF'=>16, //fresno
-                                                                     'HPPM'=>27, //san mateo
-                                                                     'HPS'=>24, //salinas
-                                                                     'catchall'=>27 //TODO
-                                                         ),
-
-                                        'servicemap'=>array(
-                                                                    "consult"=>(object)array("internalId"=>58),
-                                                                    "evaluation"=>(object)array("internalId"=>57),
-                                                                    "detox"=>(object)array("internalId"=>56),
-                                                                    "remote"=>(object)array("internalId"=>60),
-                                                                    "program"=>(object)array("internalId"=>59),
-                                                                    "interest"=>(object)array("internalId"=>864),
-                                                                    "discount"=>(object)array("internalId"=>863),
-                                                                    "catchall"=>(object)array("internalId"=>61)
-                                                        ),
-
-                                        'customfields'=>array(
-                                                                    "provider"=>'custbody4',
-                                                                    "affiliate"=>'custbody5'
-                                                        ),
-
-                                        'payment'=>array(
-                                                                   "araccount"=>351, //11010 AR
-                                                                   "depositaccount"=>338,
-                                                                   "undeposit"=>true //keep deposits in undeposited funds account
-                                                        ),
-                                        'error_email'=>true //turns off debug emails
-                                ),
+'copyright' => 'Cronrat.com',
 
 /*
 * Application name will be used in emails, title, etc
 */
-'app_name' => 'Base',
+'app_name' => 'Cronrat',
 /*
 * Jquery Mobile Settings
 */
@@ -131,7 +49,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://base.this.com',
+	'url' => 'http://cronrat.this.com',
 
 	/*
 	|--------------------------------------------------------------------------

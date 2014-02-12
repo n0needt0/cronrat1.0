@@ -1,0 +1,11 @@
+{
+    "ThisHost":"localhost",
+    "HttpHost":"localhost",
+    "HttpPort":"8082",
+    "RedisHost":"127.0.0.1",
+    "RedisPort":" 6379",
+    "RedisDb":"0",
+    "LogFile":"./cronrat22.log",
+    "CoreCnt":"1",
+    "KeySize":"8"
+}

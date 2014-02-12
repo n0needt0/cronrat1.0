@@ -1,0 +1,10 @@
+#!monit
+set logfile /var/log/monit.log
+
+check process cronrat with pidfile "/var/run/cronrat.pid"
+    start program = "/sbin/start cronrat"
+    stop program  = "/sbin/stop cronrat"
+    if failed port 8082 protocol HTTP
+        request /health
+        with timeout 10 seconds
+        then restart
