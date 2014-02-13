@@ -117,6 +117,7 @@ namespace :deploy do
 
   desc "Reload Apache"
   task :reload_apache do
+  
     unless remote_file_exists?(apache_root)
       sudo "ln -sf #{deploy_to}/current/code/var/#{application_name} #{apache_root}"
     end
@@ -127,10 +128,11 @@ end
 
 desc "Create Dirs"
 task :create_dirs do
- unless remote_file_exists?("/opt/cronrat_cache")
-      sudo "mkdir -p /opt/cronrat_cache"
-       sudo "chown -R www-data:root /opt/cronrat_cache"
- end
+     unless remote_file_exists?("/opt/cronrat_cache")
+          sudo "mkdir -p /opt/cronrat_cache"
+          sudo "chown -R www-data:root /opt/cronrat_cache"
+     end
+end
 
 before 'deploy', 'setup:me'
 
