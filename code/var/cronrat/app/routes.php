@@ -20,4 +20,3 @@ Route::controller('cronrat', 'CronratController');
 Route::controller('verify', 'VerifyController');
 
 Route::resource('groups', 'GroupController');
-
