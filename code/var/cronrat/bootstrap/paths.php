@@ -52,6 +52,6 @@ return array(
 	|
 	*/
 
-	'storage' => '/opt/base_storage',
+	'storage' => '/opt/cronrat_storage',
 
 );

@@ -77,7 +77,7 @@ namespace :deploy do
 
   desc "Write current revision to "
   task :publish_revision do
-    run "content=`cat #{deploy_to}/current/REVISION`;ip=`ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`; sed -i \"s/MY_REVISION/$content-$ip/g\" #{deploy_to}/current/code/var/base/app/views/partials/version.blade.php"
+    run "content=`cat #{deploy_to}/current/REVISION`;ip=`ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`; sed -i \"s/MY_REVISION/$content-$ip/g\" #{deploy_to}/current/code/var/cronrat/app/views/partials/version.blade.php"
   end
   
   desc "clean up old releases"
@@ -87,9 +87,9 @@ namespace :deploy do
   
   desc "write backup job"
     task :make_backup_job do
-    run "sed -i \"s/%APPLICATION%/base/g\" #{deploy_to}/current/code/backup/bin/db.sh"
-    run "sed -i \"s/%DBUSER%/base/g\" #{deploy_to}/current/code/backup/bin/db.sh"
-    run "sed -i \"s/%DBPASSWORD%/base#1/g\" #{deploy_to}/current/code/backup/bin/db.sh"
+    run "sed -i \"s/%APPLICATION%/cronrat/g\" #{deploy_to}/current/code/backup/bin/db.sh"
+    run "sed -i \"s/%DBUSER%/cronrat/g\" #{deploy_to}/current/code/backup/bin/db.sh"
+    run "sed -i \"s/%DBPASSWORD%/cronrat#1/g\" #{deploy_to}/current/code/backup/bin/db.sh"
     
     unless remote_file_exists?("/var/backup")
       sudo "mkdir -p /var/backup"
@@ -107,12 +107,12 @@ namespace :deploy do
   
   desc "get correct config"
   task :get_correct_config do
-    #run "mv #{deploy_to}/current/code/var/base/web_apps/help/config/config.#{stage}.php #{deploy_to}/current/net.helppain.mobile/code/var/help/web_apps/help/config/config.php"
+    #run "mv #{deploy_to}/current/code/var/cronrat/web_apps/help/config/config.#{stage}.php #{deploy_to}/current/net.helppain.mobile/code/var/help/web_apps/help/config/config.php"
   end
   
   desc "get correct apache"
      task :get_correct_apache_conf do
-     sudo "mv #{deploy_to}/current/code/etc/apache2/sites-enabled/#{stage}.#{application_name} /etc/apache2/sites-enabled/#{application_name}"
+     sudo "mv #{deploy_to}/current/code/etc/nginx/sites-enabled/#{stage}.#{application_name} /etc/nginx/sites-enabled/#{application_name}"
   end
 
   desc "Reload Apache"
@@ -121,9 +121,16 @@ namespace :deploy do
       sudo "ln -sf #{deploy_to}/current/code/var/#{application_name} #{apache_root}"
     end
     
-    sudo "/etc/init.d/apache2 reload"
+    sudo "/etc/init.d/nginx reload"
   end
 end
+
+desc "Create Dirs"
+task :create_dirs do
+ unless remote_file_exists?("/opt/cronrat_cache")
+      sudo "mkdir -p /opt/cronrat_cache"
+       sudo "chown -R www-data:root /opt/cronrat_cache"
+ end
 
 before 'deploy', 'setup:me'
 

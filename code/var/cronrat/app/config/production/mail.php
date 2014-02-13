@@ -53,7 +53,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => 'root@base.helppain.net', 'name' => 'Base Operations'),
+	'from' => array('address' => 'ops@cronrat.com', 'name' => 'Cron Rat'),
 
 	/*
 	|--------------------------------------------------------------------------
