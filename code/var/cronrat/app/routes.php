@@ -21,8 +21,3 @@ Route::controller('verify', 'VerifyController');
 
 Route::resource('groups', 'GroupController');
 
-Route::controller('emd', 'EmdController');
-
-
-
-
