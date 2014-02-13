@@ -1,1 +1,1 @@
-server "10.10.0.101", :web, :app
+server "cronrat.com", :web, :app
