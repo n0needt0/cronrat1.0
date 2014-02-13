@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', 'HomeController@showWelcome');
-
-//TODO Route::get('/', 'CronratController@getIndex');
+Route::get('/', 'CronratController@getIndex');
 
 Route::controller('users', 'UserController');
 
