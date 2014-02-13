@@ -160,5 +160,11 @@ after 'deploy', 'deploy:remove_old'
 #change permission to www-data user
 after 'deploy', 'deploy:chown_to_www_data'
 
+#create various directores
+after 'deploy', 'deploy:create_dirs'
+
+
 #restart apache
 after 'deploy', 'deploy:reload_apache'
+
+
