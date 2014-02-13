@@ -107,6 +107,12 @@ namespace :deploy do
   
   desc "get correct config"
   task :get_correct_config do
+    
+    unless remote_file_exists?("/opt/cronrat_cache")
+          sudo "mkdir -p /opt/cronrat_cache"
+          sudo "chown -R www-data:root /opt/cronrat_cache"
+    end
+    
     #run "mv #{deploy_to}/current/code/var/cronrat/web_apps/help/config/config.#{stage}.php #{deploy_to}/current/net.helppain.mobile/code/var/help/web_apps/help/config/config.php"
   end
   
@@ -124,14 +130,6 @@ namespace :deploy do
     
     sudo "/etc/init.d/nginx reload"
   end
-end
-
-desc "Create Dirs"
-task :create_dirs do
-     unless remote_file_exists?("/opt/cronrat_cache")
-          sudo "mkdir -p /opt/cronrat_cache"
-          sudo "chown -R www-data:root /opt/cronrat_cache"
-     end
 end
 
 before 'deploy', 'setup:me'
@@ -159,10 +157,6 @@ after 'deploy', 'deploy:remove_old'
 
 #change permission to www-data user
 after 'deploy', 'deploy:chown_to_www_data'
-
-#create various directores
-after 'deploy', 'deploy:create_dirs'
-
 
 #restart apache
 after 'deploy', 'deploy:reload_apache'

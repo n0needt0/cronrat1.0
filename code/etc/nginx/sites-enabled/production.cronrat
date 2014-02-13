@@ -13,7 +13,7 @@ server {
     server_name ix.cronrat.net;
     access_log /var/log/nginx/cronrat.log;
 
-    root /var/www/laravel/public/;
+    root /var/www/cronrat/public/;
     index index.php index.html index.htm;
 
     # pass the request to the cronrat server on 8082
