@@ -10,7 +10,4 @@
 | the console gets access to each of the command object instances.
 |
 */
-Artisan::add(new MoveEmdBillTrac);
-Artisan::add(new MoveEmdNetsuite);
-Artisan::add(new QaEmd);
-Artisan::add(new DayEmd);
+//Artisan::add(new MoveEmdBillTrac);
