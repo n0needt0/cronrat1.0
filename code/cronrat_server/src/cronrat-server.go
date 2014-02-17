@@ -138,7 +138,7 @@ func main() {
 	}
 
 	mux := pat.New()
-	mux.Get("/rat/:id", http.HandlerFunc(ratHandle))
+	mux.Get("/r/:id", http.HandlerFunc(ratHandle))
 	mux.Get("/health", http.HandlerFunc(healthHandle))
 
 	http.Handle("/", mux)
