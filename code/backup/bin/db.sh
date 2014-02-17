@@ -37,7 +37,7 @@ if ssh root@$server stat $dirdb/$f \> /dev/null 2\>\&1
 then
     echo "db file copied"
 else
-    echo  "Backup: %APPLICATION% db  FAILED" | mail -s "Backup: %APPLICATION% db  FAILED" ayasinsky@helppain.net
+    echo  "Backup: %APPLICATION% db  FAILED" | mail -s "Backup: %APPLICATION% db  FAILED" ops@cronrat.com
 fi
 
 #check if db copier correctly
@@ -51,7 +51,7 @@ if [ $dbc == $rdbc ]
 then
      echo  "checksum good"
 else
-     echo  "Backup: %APPLICATION% db  checksum FAILED" | mail -s "Backup: %APPLICATION% db checksum FAILED" ayasinsky@helppain.net
+     echo  "Backup: %APPLICATION% db  checksum FAILED" | mail -s "Backup: %APPLICATION% db checksum FAILED" ops@cronrat.com
 fi
 
 for f in $( ls -tr $dirapp | tail -n 1 );
@@ -64,7 +64,7 @@ if ssh root@$server stat $dirapp/$f \> /dev/null 2\>\&1
 then
     echo "all fine";
 else
-    echo  "Backup: %APPLICATION% app  FAILED" | mail -s "Backup: %APPLICATION% app  FAILED" ayasinsky@helppain.net
+    echo  "Backup: %APPLICATION% app  FAILED" | mail -s "Backup: %APPLICATION% app  FAILED" ops@cronrat.com
 fi
 
 dapp=`shasum $dirapp/$f | cut --delimiter=' ' -f 1`;
@@ -76,7 +76,7 @@ if [ $dapp == $rapp ]
 then
      echo  "checksum good"
 else
-     echo  "Backup: %APPLICATION% app  checksum FAILED" | mail -s "Backup: %APPLICATION% app checksum FAILED" ayasinsky@helppain.net
+     echo  "Backup: %APPLICATION% app  checksum FAILED" | mail -s "Backup: %APPLICATION% app checksum FAILED" ops@cronrat.com
 fi
 
 

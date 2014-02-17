@@ -18,21 +18,33 @@ Register
         <div class="control-group {{ ($errors->has('email')) ? 'error' : '' }}" for="email">
             <div class="controls">
                 <input name="email" id="email" value="{{ Request::old('email') }}" type="text" class="form-control" placeholder="E-mail">
-                {{ ($errors->has('email') ? $errors->first('email') : '') }}
+                @if (!empty($errors->has('email')))
+    			<div id='info' class="alert alert-danger">
+    			{{ $errors->first('email') }}
+    			</div>
+    			@endif
             </div>
         </div>
 
 		<div class="control-group {{ $errors->has('password') ? 'error' : '' }}" for="password">
     		<div class="controls">
 				<input name="password" value="" type="password" class="form-control" placeholder="New Password">
-    			{{ ($errors->has('password') ?  $errors->first('password') : '') }}
+				@if (!empty($errors->has('password')))
+    			<div id='info' class="alert alert-danger">
+    			{{ $errors->first('password') }}
+    			</div>
+    			@endif
     		</div>
     	</div>
 
     	<div class="control-group {{ $errors->has('password_confirmation') ? 'error' : '' }}" for="password_confirmation">
     		<div class="controls">
 				<input name="password_confirmation" value="" type="password" class="form-control" placeholder="New Password Again">
-    			{{ ($errors->has('password_confirmation') ? $errors->first('password_confirmation') : '') }}
+    			@if (!empty($errors->has('password_confirmation')))
+    			<div id='info' class="alert alert-danger">
+    			{{ $errors->first('password_confirmation') }}
+    			</div>
+    			@endif
     		</div>
     	</div>
 

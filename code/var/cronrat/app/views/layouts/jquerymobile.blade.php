@@ -82,7 +82,7 @@
 
 <div data-role="page" id="@yield('pageid', isset($pageid) ? $pageid : Request::path())" data-cache="false">
 	<div data-role="header" data-theme="{{Config::get('app.jqm_theme')}}">
-		<h1>{{Config::get('app.app_name')}}</h1>
+		<h1>{{Config::get('app.app_name')}} - <a href="{{ URL::to('/help') }}" data-icon="" data-iconpos="">FAQ</a></h1>
 		<a href="{{ URL::to('') }}" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 		@if (Sentry::check())
     		<a href="#popupAcc" data-rel="popup" data-role="button" data-icon="gear">{{ Sentry::getUser()->email }}</a>
@@ -96,6 +96,8 @@
 					<li><a href="{{ URL::to('users/logout') }}">Logout</a></li>
 				</ul>
 		    </div>
+		@else
+		<a href="{{ URL::to('/in') }}" data-icon="" data-iconpos="" data-direction="reverse">Login</a>
 		@endif
 	</div><!-- /header -->
 
@@ -109,8 +111,18 @@
 	</div>
 
 	<div data-role="footer" data-position="fixed" data-theme="{{Config::get('app.jqm_theme')}}">
-	    <h4> &copy; {{ date('Y'); }} {{Config::get('app.copyright')}} | <?php echo View::make('partials.version') ?></h4>
+	    <h4> &copy; {{ date('Y'); }} {{Config::get('app.copyright')}} <?php echo View::make('partials.version') ?></h4>
     </div>
 </div><!-- /page -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48152822-1', 'cronrat.com');
+  ga('send', 'pageview');
+
+</script>
 </body>
 </html>

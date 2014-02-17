@@ -4,12 +4,12 @@ class CronratController extends BaseController {
 
     public function __construct()
     {
-        $this->beforeFilter('auth');
+       $this->beforeFilter('auth', array('except' => array('getFaq','getIndex')));
     }
 
-    public function showWelcome()
+    public function getFaq()
     {
-        return View::make('hello');
+        return View::make('cronrat.faq');
     }
 
 
@@ -208,11 +208,20 @@ class CronratController extends BaseController {
         return $data;
     }
 
+    public function getIn()
+    {
+       return Redirect::to('/cronrat')->withInput();
+    }
+
     public function getIndex()
     {
+
         // User is logged in
 	    $user = Sentry::getUser();
 
+        if(empty($user)){
+            return View::make('cronrat.faq');
+        }
 		// Get the user groups
 		$groups = $user->getGroups();
 		$pro = false;

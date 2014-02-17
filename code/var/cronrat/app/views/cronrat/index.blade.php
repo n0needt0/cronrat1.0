@@ -1,5 +1,5 @@
 @extends('layouts.jquerymobile') {{-- Web site Title --}}
-@section('title') Home Base @stop {{-- Content --}}
+@section('title') Cronrat @stop {{-- Content --}}
 @section('runtimejs')
 
 <script>
@@ -70,12 +70,16 @@ $(document).on("pagecreate", function (e) {
 @if (empty($pro))
     <div id='info' class="ui-body alert-info"><center><a href="/cronrat/upgrade">upgrade to full version</a></center></div>
 @else
-    <div id='info' class="ui-body alert-info"></div>
+    <div id='info' class="ui-body alert-info">
+        @if(empty($rats))
+
+        <h4>- Fill up the form below :)</h4>
+
+        @endif
+
+    </div>
 @endif
 
-@if(empty($rats))
-<p>TODO: Instructions.</p>
-@endif
 
 <div id="addCronrat" data-role="collapsible-set" data-theme="a" data-content-theme="a">
 
@@ -103,6 +107,7 @@ $(document).on("pagecreate", function (e) {
         					<option value="43200">Every 12 hours</option>
         					<option value="21600">Every 6 hours</option>
         					<option value="3600">Every hour</option>
+        					<option value="900">Every 15 min</option>
         				</select>
                         <input id="cid" val="" type="hidden">
 						<input type="submit" id="submitRat"  name="submitRat" data-theme="a" value="Submit"> </br>

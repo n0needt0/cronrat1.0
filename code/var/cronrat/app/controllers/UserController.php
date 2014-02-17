@@ -212,7 +212,7 @@ class UserController extends BaseController {
 		    	$userGroup = Sentry::getGroupProvider()->findById(1);
 		    	$user->addGroup($userGroup);
 
-		        Session::flash('success', 'Your account has been activated. <a href="/users/login">Click here</a> to log in.');
+		        Session::flash('success', 'Your account has been activated.');
 				return Redirect::to('/users/login');
 		    }
 		    else

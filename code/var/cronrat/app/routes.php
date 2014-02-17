@@ -12,6 +12,8 @@
 */
 
 Route::get('/', 'CronratController@getIndex');
+Route::get('/in', 'CronratController@getIn');
+Route::get('/help', 'CronratController@getFaq');
 
 Route::controller('users', 'UserController');
 

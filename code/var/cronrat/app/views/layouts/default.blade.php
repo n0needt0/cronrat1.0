@@ -134,7 +134,7 @@ head.appendChild(script);
 	</div>
 
 	<div data-role="footer" data-position="fixed" data-theme="{{Config::get('app.jqm_theme')}}">
-	    <h4> Copyright &copy; {{ date('Y'); }} helppain.net All Rights Reserved | <?php echo View::make('partials.version') ?></h4>
+	    <h4> Copyright &copy; {{ date('Y'); }}All Rights Reserved | <?php echo View::make('partials.version') ?></h4>
     </div>
 </div><!-- /page -->
 </body>

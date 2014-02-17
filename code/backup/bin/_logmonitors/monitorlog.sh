@@ -1,4 +1,4 @@
-EMAILADDRESS="ayasinsky@helppain.net"
+EMAILADDRESS="ops@cronrat.net"
 EMAILSUBJECT="***** $HOSTNAME problem *****"
 MESSAGEBODY="/tmp/monitorlog.txt"
 SEARCHSTRING='error'
