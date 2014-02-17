@@ -41,6 +41,11 @@ server {
     }
 
     #now the website
+    location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+    # Some basic cache-control for static files to be sent to the browser
+       add_header Vary Accept-Encoding;
+       expires max;
+    }
     
     location / {
             if ($http_host !~ "^www\.cronrat\.com$"){
