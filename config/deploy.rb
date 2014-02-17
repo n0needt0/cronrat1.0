@@ -108,12 +108,33 @@ namespace :deploy do
   desc "get correct config"
   task :get_correct_config do
     
-    unless remote_file_exists?("/opt/cronrat_cache")
-          sudo "mkdir -p /opt/cronrat_cache"
-          sudo "chown -R www-data:root /opt/cronrat_cache"
-    end
-    
-    #run "mv #{deploy_to}/current/code/var/cronrat/web_apps/help/config/config.#{stage}.php #{deploy_to}/current/net.helppain.mobile/code/var/help/web_apps/help/config/config.php"
+        unless remote_file_exists?("/opt/#{application}_cache")
+              sudo "mkdir -p /opt/#{application}_cache"
+        end
+        
+        unless remote_file_exists?("/opt/#{application}_cache/sessions")
+              sudo "mkdir -p /opt/#{application}_cache/sessions"
+        end
+        
+        unless remote_file_exists?("/opt/#{application}_cache/meta")
+              sudo "mkdir -p /opt/#{application}_cache/meta"
+        end
+        
+        unless remote_file_exists?("/opt/#{application}_cache/views")
+              sudo "mkdir -p /opt/#{application}_cache/views"
+        end
+       
+        unless remote_file_exists?("/opt/#{application}_cache/cache")
+              sudo "mkdir -p /opt/#{application}_cache/cache"
+        end
+        
+        sudo "chown -R www-data:root /opt/#{application}_cache"
+        
+        unless remote_file_exists?("/var/log/#{application}")
+              sudo "mkdir -p /var/log#{application}"
+        end
+        
+        sudo "chown -R www-data:root /var/log/#{application}"
   end
   
   desc "get correct apache"
@@ -123,7 +144,6 @@ namespace :deploy do
 
   desc "Reload Apache"
   task :reload_apache do
-  
     unless remote_file_exists?(apache_root)
       sudo "ln -sf #{deploy_to}/current/code/var/#{application_name} #{apache_root}"
     end
