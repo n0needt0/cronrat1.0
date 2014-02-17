@@ -16,7 +16,7 @@ $(document).on("pagecreate", function (e) {
 </script>
 @stop
 @section('content')
-<h2>Hody Pilgrim. Did your cron backup run last night??</h2>
+<h2>Howdy Pilgrim. Did your cron backup run last night??</h2>
 
 <h2>Cron biggest problem</h2>
 <p>All I want is to know when Cron job fails!!! You keep sending me email that it is ok :)</p>
