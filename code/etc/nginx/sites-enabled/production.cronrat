@@ -15,6 +15,10 @@ server {
 
     root /var/www/cronrat/public/;
     index index.php index.html index.htm;
+    
+    location ~ /\. {
+        deny all;
+    }
 
     # pass the request to the cronrat server on 8082
     location /rat/ {
