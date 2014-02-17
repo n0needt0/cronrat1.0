@@ -18,7 +18,7 @@ Register
         <div class="control-group {{ ($errors->has('email')) ? 'error' : '' }}" for="email">
             <div class="controls">
                 <input name="email" id="email" value="{{ Request::old('email') }}" type="text" class="form-control" placeholder="E-mail">
-                @if (!empty($errors->has('email')))
+                @if ($errors->has('email'))
     			<div id='info' class="alert alert-danger">
     			{{ $errors->first('email') }}
     			</div>
@@ -29,7 +29,7 @@ Register
 		<div class="control-group {{ $errors->has('password') ? 'error' : '' }}" for="password">
     		<div class="controls">
 				<input name="password" value="" type="password" class="form-control" placeholder="New Password">
-				@if (!empty($errors->has('password')))
+				@if ($errors->has('password'))
     			<div id='info' class="alert alert-danger">
     			{{ $errors->first('password') }}
     			</div>
@@ -40,7 +40,7 @@ Register
     	<div class="control-group {{ $errors->has('password_confirmation') ? 'error' : '' }}" for="password_confirmation">
     		<div class="controls">
 				<input name="password_confirmation" value="" type="password" class="form-control" placeholder="New Password Again">
-    			@if (!empty($errors->has('password_confirmation')))
+    			@if ($errors->has('password_confirmation'))
     			<div id='info' class="alert alert-danger">
     			{{ $errors->first('password_confirmation') }}
     			</div>
