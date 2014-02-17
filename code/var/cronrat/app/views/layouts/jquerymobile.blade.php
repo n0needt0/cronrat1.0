@@ -78,7 +78,7 @@
 
 <div data-role="page" id="@yield('pageid', isset($pageid) ? $pageid : Request::path())" data-cache="false">
 	<div data-role="header" data-theme="{{Config::get('app.jqm_theme')}}">
-		<h1>{{Config::get('app.app_name')}} - <a href="{{ URL::to('/help') }}" data-icon="" data-iconpos="">FAQ</a></h1>
+		<h1><a href="{{ URL::to('/') }}" data-icon="" data-iconpos="">Home</a> - {{Config::get('app.app_name')}} - <a href="{{ URL::to('/help') }}" data-icon="" data-iconpos="">FAQ</a></h1>
 		<a href="{{ URL::to('') }}" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 		@if (Sentry::check())
     		<a href="#popupAcc" data-rel="popup" data-role="button" data-icon="gear">{{ Sentry::getUser()->email }}</a>
