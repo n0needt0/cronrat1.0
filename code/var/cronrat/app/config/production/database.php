@@ -49,9 +49,9 @@ return array(
 		'base' => array(
 			'driver'    => 'mysql',
 			'host'      => '127.0.0.1',
-			'database'  => 'base',
-			'username'  => 'base',
-			'password'  => 'base#1',
+			'database'  => 'cronrat',
+			'username'  => 'cronrat',
+			'password'  => 'cronrat#1',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
