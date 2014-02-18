@@ -68,7 +68,6 @@ class RatCheck extends Command {
                 foreach ($this->rats as $row)
                 {
                     $pipe->set($row->cronrat_code . ":VALID", $row->ttl);
-                    $pipe->set($row->cronrat_code . ":RAT", time() - 2000);
                     $pipe->expire($row->cronrat_code . ":VALID",60*60); // revalidate every hour
                 }
 
@@ -110,7 +109,7 @@ class RatCheck extends Command {
 
     private function notify($data)
     {
-         Mail::send('cronrat.down', $data, function($message) use ($data)
+         Mail::send('emails.cronrat.down', $data, function($message) use ($data)
          {
             $message->to($data['email'])->subject($data['cronrat_name'] . ' Cronrat is down!');
          });
