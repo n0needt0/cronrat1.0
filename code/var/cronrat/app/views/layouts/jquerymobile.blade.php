@@ -42,6 +42,13 @@
 <!-- List of JS libs we use -->
 
 <script>
+        $.mobile.ajaxEnabled = false;
+
+        $.ajaxSetup ({
+         // Disable caching of AJAX responses
+         cache: false
+         });
+
         var Conf = Conf || {};
 
         Conf.server_name = '<?php echo $_SERVER['SERVER_NAME']?>';
@@ -81,7 +88,9 @@
 		<h1><a href="{{ URL::to('/') }}" data-icon="" data-iconpos="">Home</a> - {{Config::get('app.app_name')}} - <a href="{{ URL::to('/help') }}" data-icon="" data-iconpos="">FAQ</a></h1>
 		<a href="{{ URL::to('') }}" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 		@if (Sentry::check())
+
     		<a href="#popupAcc" data-rel="popup" data-role="button" data-icon="gear">{{ Sentry::getUser()->email }}</a>
+
 			<div data-role="popup" id="popupAcc" data-theme="b">
 				<ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="{{Config::get('app.jqm_theme')}}">
 					@if (Sentry::check() && Sentry::getUser()->hasAccess('admin'))
@@ -92,10 +101,12 @@
 					<li><a href="{{ URL::to('users/logout') }}">Logout</a></li>
 				</ul>
 		    </div>
+
 		@else
 		<a href="{{ URL::to('/in') }}" data-icon="" data-iconpos="" data-direction="reverse">Login</a>
 		@endif
-	</div><!-- /header -->
+</div>
+<!-- /header -->
 
 	<div data-role="content">
             <!-- Notifications -->

@@ -3,12 +3,6 @@
 @section('runtimejs')
 
 <script>
-$.mobile.ajaxEnabled = false;
-
-$.ajaxSetup ({
- // Disable caching of AJAX responses
- cache: false
- });
 
 $(document).on("pagecreate", function (e) {
 
