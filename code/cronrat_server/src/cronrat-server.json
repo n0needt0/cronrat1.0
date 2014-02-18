@@ -5,7 +5,7 @@
     "RedisHost":"127.0.0.1",
     "RedisPort":" 6379",
     "RedisDb":"0",
-    "LogFile":"./cronrat22.log",
+    "LogFile":"/var/log/cronrat/cronrat.log",
     "CoreCnt":"1",
     "KeySize":"8"
 }

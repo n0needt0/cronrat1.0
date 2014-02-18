@@ -135,7 +135,19 @@ namespace :deploy do
         end
         
         sudo "chown -R www-data:root /var/log/#{application}"
+        
+        #move cronrat server
+         unless remote_file_exists?("/var/cronrat_bin")
+              sudo "mkdir -p /var/cronrat_bin"
+         end
+         
+         #link executable
+         sudo "ln -sf #{deploy_to}/current/code/cronrat_server/src/cronrat-server /var/cronrat_bin/"
+         sudo "ln -sf #{deploy_to}/current/code/cronrat_server/src/cronrat-server.json /var/cronrat_bin/"
+         sudo "chmod -R 777 /var/cronrat_bin/cronrat-server"
+         sudo "service cronrat restart"
   end
+  
   
   desc "get correct apache"
      task :get_correct_apache_conf do
