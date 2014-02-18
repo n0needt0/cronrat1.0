@@ -60,6 +60,7 @@ $(document).on("pagecreate", function (e) {
              }
     });
 
+
 	    //REMOVE: link disabled elements if not pro ://REMOVE
 	    @if (empty($pro))
         @endif
