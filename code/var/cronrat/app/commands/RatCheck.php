@@ -29,6 +29,7 @@ class RatCheck extends Command {
     public function __construct()
     {
         parent::__construct();
+        $this->rats = array();
     }
 
     private function debug($msg)
@@ -58,15 +59,15 @@ class RatCheck extends Command {
 
             //create fresh copy of invoices
             $sql = "SELECT * FROM cronrat WHERE verify=''";
-            $this->res = DB::table("cronrat")->get();
+            $this->rats = DB::table("cronrat")->get();
 
-            $this->info(print_r($this->res, true));
+            $this->info(print_r($this->rats, true));
 
             $this->debug("Updating Valid Cronrats");
 
             Redis::pipeline(function($pipe)
             {
-                foreach ($this->res as $row)
+                foreach ($this->rats as $row)
                 {
                     $pipe->set($row->cronrat_code . ":VALID", 1);
                     $pipe->expire($row->cronrat_code . ":VALID", 60*60*24);
