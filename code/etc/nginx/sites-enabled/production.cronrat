@@ -12,6 +12,8 @@ server {
     listen 0.0.0.0:80 default deferred;
     server_name ix.cronrat.net;
     access_log /var/log/nginx/cronrat.log;
+    
+    sendfile off;
 
     root /var/www/cronrat/public/;
     index index.php index.html index.htm;
