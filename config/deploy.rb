@@ -161,6 +161,8 @@ namespace :deploy do
     end
     
     sudo "/etc/init.d/nginx reload"
+    sudo "service php5-fpm restart"
+    
   end
 end
 

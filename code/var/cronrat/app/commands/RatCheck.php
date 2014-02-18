@@ -60,7 +60,7 @@ class RatCheck extends Command {
             //get all rats
             $sql = "SELECT * FROM cronrat WHERE verify=''";
             $this->rats = DB::table("cronrat")->get();
-            $this->debug(print_r($rats, true));
+            $this->debug(print_r($$this->rats, true));
 
             Redis::pipeline(function($pipe)
             {
