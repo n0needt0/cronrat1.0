@@ -58,25 +58,22 @@ class RatCheck extends Command {
         try{
 
             //create fresh copy of invoices
-            $sql = "SELECT * FROM cronrat WHERE verify=''";
-            $this->rats = DB::table("cronrat")->get();
-
-            $this->info(print_r($this->rats, true));
-
-            $this->debug("Updating Valid Cronrats");
 
             Redis::pipeline(function($pipe)
             {
-                foreach ($this->rats as $row)
+                $sql = "SELECT * FROM cronrat WHERE verify=''";
+                $rats = DB::table("cronrat")->get();
+                $this->debug(print_r($rats, true));
+                $this->debug("Updating Valid Cronrats");
+
+                foreach ($rats as $row)
                 {
                     $pipe->set($row->cronrat_code . ":VALID", 1);
                     $pipe->expire($row->cronrat_code . ":VALID", 60*60*24);
                 }
+                $this->debug("Updating Valid Cronrats: Done");
             });
-
-            $this->debug("Updating Valid Cronrats: Done");
             //check all rats and set mail to flags
-
         }
         catch(Exception $e)
         {
