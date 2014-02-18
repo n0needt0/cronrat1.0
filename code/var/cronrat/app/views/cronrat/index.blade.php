@@ -28,6 +28,7 @@ $(document).on("pagecreate", function (e) {
         $(".popupRat").popup("close");
         var cid =$(this).attr("id");
         $("#cid").val(cid);
+        $("#info").html("<center>http(s)://cronrat.com/r/"+cid+"</center>");
         debug(cid)
     });
 
