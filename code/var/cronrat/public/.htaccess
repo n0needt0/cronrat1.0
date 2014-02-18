@@ -2,10 +2,6 @@
     Options -MultiViews
     RewriteEngine On
 
-	RewriteCond %{HTTP_HOST} !^www\.cronrat\.com$ [NC]
-    RewriteCond %{SERVER_PORT} !^443$ 
-    RewriteRule ^(.*)$ http://www.cronrat.com/$1 [R=301,L]
-
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond $1 !^(index\.php|favicon\.ico|assets|robots\.txt|healthcheck\.php)
     RewriteRule ^ index.php [L]
