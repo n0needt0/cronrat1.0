@@ -60,19 +60,45 @@ class RatCheck extends Command {
             //get all rats
             $sql = "SELECT * FROM cronrat WHERE verify=''";
             $this->rats = DB::table("cronrat")->get();
-            $this->debug(print_r($$this->rats, true));
+            $this->debug(print_r($this->rats, true));
 
             Redis::pipeline(function($pipe)
             {
                 $this->debug("Updating Valid Cronrats");
                 foreach ($this->rats as $row)
                 {
-                    $pipe->set($row->cronrat_code . ":VALID", 1);
-                    $pipe->expire($row->cronrat_code . ":VALID", 60*60*24);
+                    $pipe->set($row->cronrat_code . ":VALID", $row->ttl);
+                    $pipe->set($row->cronrat_code . ":RAT", time() - 2000);
+                    $pipe->expire($row->cronrat_code . ":VALID",60*60); // revalidate every hour
                 }
+
                 $this->debug("Updating Valid Cronrats: Done");
             });
-            //check all rats and set mail to flags
+
+            //check if up to date
+           foreach ($this->rats as $row)
+           {
+               if($row->active == 1)
+              {
+                  if( $ts = Redis::get($row->cronrat_code . ':RAT') )
+                  {
+                      if($ts + $row->ttl < time())
+                      {
+                          //expired call the owner
+                          $exp = array('cronrat_name'=>$row->cronrat_name, 'cronrat_code'=>$row->cronrat_code, 'email'=>$row->fail_email);
+                          $this->notify($exp);
+                          $this->debug('Expired ' . print_r($exp, true));
+                      }
+                  }
+                    else
+                  {
+                      //expired call the owner
+                      $exp = array('cronrat_name'=>$row->cronrat_name, 'cronrat_code'=>$row->cronrat_code, 'email'=>$row->fail_email);
+                      $this->notify($exp);
+                      $this->debug('Expired ' . print_r($exp, true));
+                  }
+              }
+           }
 
 
         }
@@ -80,6 +106,14 @@ class RatCheck extends Command {
         {
             $this->error($e->getMessage());
         }
+    }
+
+    private function notify($data)
+    {
+         Mail::send('cronrat.down', $data, function($message) use ($data)
+         {
+            $message->to($data['email'])->subject($data['cronrat_name'] . ' Cronrat is down!');
+         });
     }
 
 }

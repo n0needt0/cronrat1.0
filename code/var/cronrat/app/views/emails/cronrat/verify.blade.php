@@ -10,7 +10,7 @@
 		<p>To activate your cronrat url, <a href="{{  URL::to('verify/cronrat') . '/' .  urlencode($verify) }}">click here.</a></p>
 		<p>Or point your browser to this address: <br /> {{  URL::to('cronrat/activate') . '/' .  urlencode($verify) }}</p>
 
-		<p>Once verified, you can use this url...blah </p>
+		<p>Once verified, you can use this url  http(s)://cronrat.com/r/{{ $cronrat_code }} to use in cronrab. <a href="{{  URL::to('/help') }}">Instructions Here.</a></p>
 		<p>Thank you, <br />
 			~The Cronrat Team</p>
 	</body>
