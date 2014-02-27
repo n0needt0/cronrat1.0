@@ -19,33 +19,64 @@ $(document).on("pagecreate", function (e) {
 <h2>Howdy Pilgrim. Did your cron backup run last night??</h2>
 
 <h2>Cron biggest problem</h2>
-<p>All I want is to know when Cron job fails!!! You keep sending me email that it is ok :)</p>
+<p>All we want is to know when scheduled job fails:) ...And insted we get mailbox full of cron spam that jobs succeed :(</p>
+<h2>Well this is about to change!</h2>
 
 <h2>What is Cronrat?!</h2>
-<p>Cronrat is a scheduler (i.e. Cron) monitoring tool. It will notify you when your job fails. Without cram spam. Built by Andrew Yasinsky and two hamsters in California, USA.
+<p>Cronrat is a scheduled task (i.e. Cron) monitoring tool. It will alert when job fails. Without cram spam. Built by Andrew Yasinsky and powered by two golang hamsters in California, USA.
 </p>
 
 <h2>How does it work</h2>
-<pre>
-Super Crazy Simple, Same on Unix or Windowz
 
-1. You call job's Cronrat url (http or https) everytime your job (Cron) runs successfully.
-2. We notify you if your job did not call its Cronrat url within selected time frame
-3. You Run, Scream and Shout till it all fixed up..
+<pre>
+Super Awesome Nice &copy; 2014 cronrat.com
+
+1. Register your account
+2. Get Cronrat key.
+3. Thats it...
+    Now you can deploy manually or via script.
+    No need to use UI and nothing to configure.
+
+    To start monitoring your job simply call url (like in example below).
+    This will start counter, if url is not refreshed within preconfigured time,
+    you will get alerted.
+
+     such as this:
+
+    http(s)://cronrat.com/r/CRONRATKEY/JOBNAME/[NEXTCHECK]/[EMAILTO]/[URLTOPULL]
+    CRONRATKEY (required) - cronrat key you receive for your account
+    JOBNAME (required, max 256 char) - what ever identifies your job alphanumeric or URL encode please
+    NEXTCHECK (optional) - a number of MINUTES to wait for next checkin before alert. Minimum 60 (5 for paid accounts) , default 1440.
+        (make sure to pad based on your needs i.e. if it takes your job to run 5 minutes every 30 minutes, set NEXTCHECK to 35 or even 40 minutes )
+    EMAILTO (optional) - by default alert will be sent to registered email (paid accountscan overwrite it here)
+    URLTOPULL (optional) -  (paid accounts only) the url to pull http or https upon alert
+
+    example urls:
+    http://cronrat.com/r/f234abc/BackupMysqlWww
+    <i>will alert if job BackupMySQL not run in next 24 hours </i>
+
+    http://cronrat.com/r/f234abc/BackupMysqlWww/30/4155551212%40txt.att.net
+    <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net (Note Url encoded @ is %40)</i>
+
+    http://cronrat.com/r/f234abc/BackupMysqlWww/30/4155551212%40txt.att.net/http%3A%2F%2Fmyserver.com%2Frebootsql.php
+    <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
+    and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
+
+3. Integration Into Various scripts
 
 From Crontab
 
-0 0 * * * /usr/bin/backintime  --backup-job  && curl http://cronrat.com/r/YOURCRONRATCODE &> /dev/null
+0 0 * * * /usr/bin/backintime  --backup-job  && curl http://cronrat.com/r/f234abc/BackupMysqlWww &> /dev/null
 
 Or you can used from inside of your scripts, just call Cronrat url
 
 //Bash Example
-curl -l http://cronrat.com/r/YOURCRONRATCOD &> /dev/null
+curl -l http://cronrat.com/r/f234abc/BackupMysqlWww &> /dev/null
 
 PHP example
 // create a new cURL resource
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "http://cronrat.com/r/YOURCRONRATCODE");
+curl_setopt($ch, CURLOPT_URL, "http://cronrat.com/r/f234abc/BackupMysqlWww");
 curl_setopt($ch, CURLOPT_HEADER, 0);
 curl_exec($ch);
 curl_close($ch);
@@ -53,29 +84,32 @@ curl_close($ch);
 //RUBY
 require "net/http"
 ...
-Net::HTTP.get("cronrat.com", "/r/YOURCRONRATCODE")
+Net::HTTP.get("cronrat.com", "/r/f234abc/BackupMysqlWww")
 
 //Python
 import webbrowser
 ...
-webbrowser.open("http://cronrat.com/r/YOURCRONRATCODE")
+webbrowser.open("http://cronrat.com/r/f234abc/BackupMysqlWww")
 
 //Powershell
-powershell -ExecutionPolicy unrestricted -Command "(New-Object Net.WebClient).DownloadString(\"http://cronrat.com/r/YOURCRONRATCODE\")"
+powershell -ExecutionPolicy unrestricted -Command "(New-Object Net.WebClient).DownloadString(\"http://cronrat.com/r/f234abc/BackupMysqlWww\")"
 
 //golang
 import "net/http"
 ..
-res, err := http.Get("http://cronrat.com/r/YOURCRONRATCODE")
+res, err := http.Get("http://cronrat.com/r/f234abc/BackupMysqlWww")
 
 you got the idea right??
+
+5. You can see all of your Cronrats using nice UI
+
+6. Free accounts get 10 cronrats, need more?? it is only $29 a year
+
+7. Cronrat will notify of failure 3 times., thereafter it will go dormant (and you will get 1 more cronrat available to you) and be deleted in 30 days. nothing to do for you.
 </pre>
 
 <h2>How do i get my Cronrat URl</h2>
 <p>Signup for service and you can have unlimited (almost) number of Cronrat URLs for all of your jobs.</p>
-
-<h2>Why Is it free</h2>
-<p>I thought it be nice after years of using open source to donate some of my time to good cause.</p>
 
 <h2>Who uses Cronrat?</h2>
 <p>Sorry you had to ask, because we will not tell you, nor we sell their emails.</p>
@@ -88,6 +122,5 @@ you got the idea right??
 date_default_timezone_set('UTC');
 echo date('Y-m-d h:i:s T',time());
 ?>
-
 
 @stop
