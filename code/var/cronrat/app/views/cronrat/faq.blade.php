@@ -16,7 +16,7 @@ $(document).on("pagecreate", function (e) {
 </script>
 @stop
 @section('content')
-<h2>Howdy Pilgrim. Did your cron backup run last night??</h2>
+<h2>Howdy. Did your backup run last night??</h2>
 
 <h2>Cron biggest problem</h2>
 <p>All we want is to know when scheduled job fails:) ...And insted we get mailbox full of cron spam that jobs succeed :(</p>
