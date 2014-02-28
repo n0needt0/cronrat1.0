@@ -16,14 +16,13 @@ $(document).on("pagecreate", function (e) {
 </script>
 @stop
 @section('content')
-<h2>Howdy. Did your backup run last night??</h2>
 
 <h2>Cron biggest problem</h2>
-<p>All we want is to know when scheduled job fails:) ...And insted we get mailbox full of cron spam that jobs succeed :(</p>
+<p>All we want is to know when scheduled job fails, instead we get message when jobs succeeda :(</p>
 <h2>Well this is about to change!</h2>
 
 <h2>What is Cronrat?!</h2>
-<p>Cronrat is a scheduled task (i.e. Cron) monitoring tool. It will alert when job fails. Without cram spam. Built by Andrew Yasinsky and powered by two golang hamsters in California, USA.
+<p>Cronrat is a monitoring tool. It will alert when job fails. Without cram spam. Built by Andrew Yasinsky and powered by two golang hamsters in California, USA.
 </p>
 
 <h2>How does it work</h2>
@@ -45,8 +44,8 @@ Super Awesome Nice &copy; 2014 cronrat.com
 
     http(s)://cronrat.com/r/CRONRATKEY/JOBNAME/[NEXTCHECK]/[EMAILTO]/[URLTOPULL]
     CRONRATKEY (required) - cronrat key you receive for your account
-    JOBNAME (required, max 256 char) - what ever identifies your job alphanumeric or URL encode please
-    NEXTCHECK (optional) - a number of MINUTES to wait for next checkin before alert. Minimum 60 (5 for paid accounts) , default 1440.
+    JOBNAME (required, max 256 char) - Unique (for your account) Alert name, alphanumeric URL encoded please
+    NEXTCHECK (optional) - a number of MINUTES to wait for next checkin before alert. Minimum 15, max 10080, default 1440.
         (make sure to pad based on your needs i.e. if it takes your job to run 5 minutes every 30 minutes, set NEXTCHECK to 35 or even 40 minutes )
     EMAILTO (optional) - by default alert will be sent to registered email (paid accountscan overwrite it here)
     URLTOPULL (optional) -  (paid accounts only) the url to pull http or https upon alert

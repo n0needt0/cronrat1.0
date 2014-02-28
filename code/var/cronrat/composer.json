@@ -2,7 +2,9 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"cartalyst/sentry": "2.0.*",
-		"lj4/redbean-laravel4": "dev-master"
+		"lj4/redbean-laravel4": "dev-master",
+		"omnipay/paypal": "~2.0"
+		
 	},
 	"autoload": {
 		"classmap": [

@@ -7,6 +7,13 @@ Log In
 
 {{-- Content --}}
 @section('content')
+
+<div data-role="controlgroup" data-type="horizontal" align='center'>
+    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Register Free (2 rats)</a>
+    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Pro $29/year (20 rats)</a>
+    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Monster $99/year (100 rats)</a>
+</div>
+
 <h3>Login</h3>
 @if(Config::get('authentication.radius') == true )
 <div class="ui-body alert-info">
@@ -14,6 +21,7 @@ If you use email login, use password, otherwise use RSA and token...
 </div>
 @endif
 <div class="well">
+
 <form action="{{ URL::to('users/login') }}" method="post" data-ajax="false">
     {{ Form::token(); }}
      <fieldset>
@@ -33,7 +41,6 @@ If you use email login, use password, otherwise use RSA and token...
          <div class="alert alert-danger">{{$errors->first('password')}}</div>
          @endif
          <input type="submit" data-theme="{{Config::get('app.jqm_theme')}}" value="Log In">
-         <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Register</a>
          </br>
      </fieldset>
      <div data-role="controlgroup" data-type="horizontal" align='center'>
