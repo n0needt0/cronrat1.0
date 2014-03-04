@@ -40,7 +40,7 @@ $(document).on("pagecreate", function (e) {
 <div id='info' class="ui-body alert-info">
 @if(empty($rats))
 <h4>Where are my rats?</h4>
-<h4>click <a href=" {{Config::get('app.url')}}/r/{{$cronrat_code}}/MyTestRat"> http://cronrat.com/r/coOSSWrq/TEST</a> to test</h4>
+<h4>click <a href=" {{Config::get('app.url')}}/r/{{$cronrat_code}}/MyTestRat"> {{Config::get('app.url')}}/r/coOSSWrq/TEST</a> to test</h4>
 <h4>then click back to this page</h4>
 <h4>read FAQ on how to use Cronrat</h4>
 
