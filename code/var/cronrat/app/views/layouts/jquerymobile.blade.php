@@ -84,27 +84,21 @@
 <body>
 
 <div data-role="page" id="@yield('pageid', isset($pageid) ? $pageid : Request::path())" data-cache="false">
-	<div data-role="header" data-theme="{{Config::get('app.jqm_theme')}}">
-		<h1><a href="{{ URL::to('/') }}" data-icon="" data-iconpos="">Home</a> - {{Config::get('app.app_name')}} - <a href="{{ URL::to('/help') }}" data-icon="" data-iconpos="">FAQ</a></h1>
-		<a href="{{ URL::to('') }}" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+<div data-role="header" data-theme="{{Config::get('app.jqm_theme')}}">
+    <div data-role="navbar">
+    <ul>
+		<li><a href="{{ URL::to('/') }}"> {{Config::get('app.app_name')}} </a></li>
+		<li><a href="{{ URL::to('/help') }}">FAQ</a></li>
 		@if (Sentry::check())
-
-    		<a href="#popupAcc" data-rel="popup" data-role="button" data-icon="gear">{{ Sentry::getUser()->email }}</a>
-
-			<div data-role="popup" id="popupAcc" data-theme="b">
-				<ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="{{Config::get('app.jqm_theme')}}">
-					@if (Sentry::check() && Sentry::getUser()->hasAccess('admin'))
-							<li {{ (Request::is('users*') ? 'class="active"' : '') }}><a href="{{ URL::to('/users') }}">Users</a></li>
-							<li {{ (Request::is('groups*') ? 'class="active"' : '') }}><a href="{{ URL::to('/groups') }}">Groups</a></li>
-				    @endif
-					<li><a href="{{ URL::to('/users/edit/'.Sentry::getUser()->id) }}">Account</a></li>
-					<li><a href="{{ URL::to('users/logout') }}">Logout</a></li>
-				</ul>
-		    </div>
-
-		@else
-		<a href="{{ URL::to('/in') }}" data-icon="" data-iconpos="" data-direction="reverse">Login</a>
+		<li><a href="{{ URL::to('/users/edit/'.Sentry::getUser()->id) }}">Profile</a></li>
 		@endif
+		@if (!Sentry::check())
+		<li><a href="{{ URL::to('/in') }}">Login</a></li>
+		@else
+		<li><a href="{{ URL::to('users/logout') }}">Logout</a></li>
+		@endif
+	</ul>
+	</div>
 </div>
 <!-- /header -->
 
@@ -118,7 +112,7 @@
 	</div>
 
 	<div data-role="footer" data-position="fixed" data-theme="{{Config::get('app.jqm_theme')}}">
-	    <h4> &copy; {{ date('Y'); }} {{Config::get('app.copyright')}} <?php echo View::make('partials.version') ?></h4>
+	    <h3> &copy; {{ date('Y'); }} {{Config::get('app.copyright')}} <?php echo View::make('partials.version') ?></h3>
     </div>
 </div><!-- /page -->
 <script>

@@ -14,6 +14,35 @@ Class CronratApi extends CronratBase{
     }
 
     /**
+     * Refreshes all active accounts from db into redis
+     */
+    public static function refresh_accounts_from_db($ratkey=false)
+    {
+        $cnt = 0;
+        if(!$ratkey)
+        {
+            //refresh all accounts
+            $res = DB::table("users")->where('activated',1)->get();
+            foreach($res as $row)
+            {
+                self::set_account($row);
+                $cnt++;
+            }
+        }
+         else
+        {
+            //refresh only one
+            $res = DB::table("users")->where('activated',1)->where('cronrat_code', $ratkey)->get();
+            foreach($res as $row)
+            {
+                self::set_account($row);
+                $cnt = 1;
+            }
+        }
+        return $cnt;
+    }
+
+    /**
      * check for key in redis
      * @param string $ratkey
      */
@@ -30,6 +59,18 @@ Class CronratApi extends CronratBase{
         return unserialize($result);
     }
 
+    protected static function lookup_pattern($pattern)
+    {
+        $keys = Redis::keys($pattern);
+
+        $res = array();
+        foreach($keys as $i=>$key)
+        {
+             $res[$key] = self::lookup($key);
+        }
+        return $res;
+  }
+
     /**
      * Set key value in redis
      * @param string $ratkey
@@ -40,18 +81,19 @@ Class CronratApi extends CronratBase{
     {
         if( Redis::set($ratkey, serialize($value)) )
         {
-            if( Redis::expire($ratkey, $ttl) )
+
+            if( Redis::expire($ratkey, $ttlsec) )
             {
-                \Log::info("stored $ratkey for $ttl sec");
+                \Log::info("stored $ratkey for $ttlsec sec");
                 return true;
             }
               else
             {
-                \Log::info("failed set expire on $ratkey for $ttl sec");
+                \Log::info("failed set expire on $ratkey for $ttlsec sec");
                  return false;
             }
         }
-         \Log::info("failed store $ratkey for $ttl sec");
+         \Log::info("failed store $ratkey for $ttlsec sec");
          return false;
     }
 
@@ -70,36 +112,75 @@ Class CronratApi extends CronratBase{
         return $res;
     }
 
+    public static function set_account($user)
+    {
+        $levels = Config::get('cronrat.levels');
+
+        if(empty($levels[$user->cronrat_level]))
+        {
+            $acct = $levels[1];
+        }
+         else
+        {
+            $acct = $levels[$user->cronrat_level];
+        }
+
+        $ratkey = $user->cronrat_code;
+        $acct['email'] = $user->email;
+
+        return self::store("account::$ratkey", $acct, 60 * 60 * 24 * 30); //lets initially store user account to flush out in 30 days
+    }
+
+
+
     /**
      * @param string $ratkey
      * retrieves all status rats for account
      */
-    public static function get_account_rats($ratkey)
+    public static function get_account_live_rats($ratkey,$keysonly=true)
     {
-        return Redis::keys($ratkey . '::status::*');
+        $pattern = $ratkey . '::status::*';
+
+        if($keysonly)
+        {
+            return Redis::keys($pattern);
+        }
+          else
+        {
+            return self::lookup_pattern($pattern);
+        }
     }
 
      /**
      * @param string $ratkey
      * retrieves all rat specs for account
      */
-    public static function get_account_rats_specs($ratkey)
+    public static function get_account_expected_rats($ratkey,$keysonly=true)
     {
-        return Redis::keys($ratkey . '::specs::*');
+        $pattern = $ratkey . '::specs::*';
+
+        if($keysonly)
+        {
+            return Redis::keys($pattern);
+        }
+          else
+        {
+            return self::lookup_pattern($pattern);
+        }
     }
 
-    public static function set_rat($ratkey, $ratname, $ttl, $email, $url)
+    private static function set_rat($ratkey, $ratname, $ttl, $email, $url)
     {
          //set status key , this is sgnifies that rat is running
-         $r = self::store($ratkey . '::status::' . $ratname, 1, $ttl * 60);
+         $r = self::store($ratkey . '::status::' . $ratname, time(), $ttl * 60);
 
          //set specs array, this is what tells us what we expect should be alive and what to do if not
          $spec = array('ttl'=>$ttl, 'email'=>$email, 'url'=>$url);
-         $s = self::store($ratkey . '::specs::' . $ratname, $spec, 7 * 24 * 60 * 60);
-         //this tracks what we expect to be live
-         $i = self::store('liveindex::' . $ratkey . '::' . $ratname, 1, 7 * 24 * 60 * 60);
 
-         if( $r && $s && $i )
+         //this tracks what we expect to be live
+         $s = self::store($ratkey . '::specs::' . $ratname, $spec, 7 * 24 * 60 * 60);
+
+         if( $r && $s)
          {
              return true;
          }
@@ -107,65 +188,84 @@ Class CronratApi extends CronratBase{
          return false;
     }
 
-    public static function check_set_rat($ratkey, $ratname, $ttlmin=1440, $email=false, $url=false )
+   public static function delete_rat($ratid)
+    {
+        $rediskey = str_replace('::::', '::status::', $ratid);
+         //set status key , this is sgnifies that rat is running
+         Redis::del($rediskey);
+         $rediskey = str_replace('::::', '::specs::', $ratid);
+         Redis::del($rediskey);
+    }
+
+
+    /**
+     * @param string $ratkey
+     * @param string $ratname
+     * @param number $ttlmin
+     * @param string $email
+     * @param string $url
+     * @throws Exception
+     * @return boolean
+     */
+
+    public static function check_set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto)
     {
         //this function sets rat key ast ttl and rat spec key at ttl of 48 hr.
         //this also sets index key as index::$ratkey = 1 of ttl of 48 hr
         //rat key may eventually expire, then we will need to
-        if(!is_int($ttlmin) || $ttlmin < 15 )
-        {
-            $ttlmin = 1440;
-        }
-        $ttlsec = $ttlmin *60;
 
         //see if user exists
-        if(!$acct = get_account($ratkey))
+        if(!$acct = self::get_account($ratkey))
         {
-            throw new Exception("Invalid account");
+            //see if it is in database
+            if(!self::refresh_accounts_from_db($ratkey))
+            {
+                throw new \Exception("Invalid account");
+                return false;
+            }
+        }
+
+        if($emailto && !$acct['emailto'])
+        {
+            throw new \Exception("Alternative Email feature is disabled. Upgrade account!");
             return false;
+
         }
 
-        if(!$email)
+        if(!$emailto)
         {
-            $email = $acct['email'];
+            $emailto = $acct['email'];
         }
 
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+       if(!filter_var($emailto, FILTER_VALIDATE_EMAIL))
        {
-            throw new Exception("Invalid email");
+            throw new \Exception("Invalid email");
             return false;
-        }
-
-        //see if rat exists, if so update its ttl otherwise go forward
-        if($rat = self::lookup($ratkey . '::status::' . $ratname))
-        {
-            //it is here just update update.
-            return self::set_rat($ratkey, $ratname, $ttl, $email, $url);
         }
 
         //this is new rat, so more work required
 
-        $user_rats = self::get_account_rats($ratkey);
+        $user_rats = self::get_account_live_rats($ratkey);
 
-        if(count($user_rats) > $acct['ratlimit'])
+        if(count($user_rats) >= $acct['ratlimit'])
         {
-            throw new Exception("Too many Rats, upgrade account");
+            throw new \Exception("Too many Rats, upgrade account");
             return false;
         }
 
         if($ttlmin < $acct['ttlmin'])
         {
-            throw new Exception("Time too short upgrade account");
+            throw new \Exception("Time too short upgrade account");
             return false;
         }
 
-        if($url && !$acct['url'])
+        if($urlto && !$acct['urlto'])
         {
-            throw new Exception("Cannot use url feature. Upgrade account");
+            throw new \Exception("Cannot use url pull feature. Upgrade account");
             return false;
         }
 
         //set url
-        return self::set_rat($ratkey, $ratname, $ttl, $email, $url);
+        return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto);
     }
 }

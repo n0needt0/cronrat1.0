@@ -15,6 +15,8 @@ Route::get('/', 'CronratController@getIndex');
 Route::get('/in', 'CronratController@getIn');
 Route::get('/help', 'CronratController@getFaq');
 
+Route::get('/r/{ratkey?}/{ratname?}/{ttlmin?}/{alertemail?}/{alerturl?}', 'CronratUrl@getCr');
+
 Route::controller('users', 'UserController');
 
 Route::controller('cronrat', 'CronratController');

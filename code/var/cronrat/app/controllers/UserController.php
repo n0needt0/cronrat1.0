@@ -1,6 +1,8 @@
 <?php
 
-use \Lasdorf\Radius\Radius as Radius;
+use Lasdorf\CronratApi\CronratApi;
+
+use \Lasdorf\CronratApi\CronratApi as Rat;
 
 class UserController extends BaseController {
 
@@ -203,17 +205,19 @@ class UserController extends BaseController {
 		    // Find the user
 		    $user = Sentry::getUserProvider()->findById($userId);
 
+		    $user->cronrat_code = $this->gen_uuid();
+			$user->cronrat_level = 1; //TODO add depending on price paid
+
 		    // Attempt user activation
-		    if ($user->attemptActivation($activationCode))
+		    if ($user->attemptActivation($activationCode) && $user->save() && CronratApi::set_account($user) )
 		    {
 		        // User activation passed
 
 		    	//Add this person to the user group.
 		    	$userGroup = Sentry::getGroupProvider()->findById(1);
 		    	$user->addGroup($userGroup);
-
-		        Session::flash('success', 'Your account has been activated.');
-				return Redirect::to('/users/login');
+		    	Session::flash('success', 'Your account has been activated.');
+    			return Redirect::to('/users/login');
 		    }
 		    else
 		    {
@@ -243,6 +247,10 @@ class UserController extends BaseController {
 	 */
 	public function getLogin()
 	{
+	    if ( Sentry::check())
+		{
+		    return Redirect::to(Config::get('app.url'));
+		}
 		// Show the register form
 		return View::make('users.login');
 	}
@@ -258,59 +266,6 @@ class UserController extends BaseController {
 			'password' => Input::get('password'),
 			'rememberMe' => Input::get('rememberMe')
 			);
-
-	   if (ctype_alpha($input['email']) && Config::get('authentication.radius'))
-	   {
-            // alpha only user name and radius enabled
-		    //use user name + authentication.domain and password
-		    //if authenticates Radius
-		    //insert or update user + domain and password as entered RSA key
-		    //continue agains db
-
-	       $rserver = Config::get('radius.server');
-	       $rsecret = Config::get('radius.secret');
-
-		   Log::info('using radius for domain:' . Config::get('authentication.domain'));
-		   Log::info("connecting to $rserver : $rsecret");
-
-		   $radius = new Radius($rserver, $rsecret);
-
-		   Log::info("authenticating: " . $input['email']);
-
-           if ($radius->AccessRequest($input['email'], $input['password']))
-           {
-               Log::info("User " . $input["email"] . " authenticated");
-               // user authenticated against radius
-               $input['email'] .= '@' . Config::get('authentication.domain');
-
-               try{
-                   $u = Sentry::getUserProvider()->findByLogin($input['email']);
-                   // lets update it into user database
-                   $u->password = $input['password'];
-                   $u->save();
-                   Session::flash('info', 'User account for ' . $input['email'] . " updated! <a href='" . URL::to('users/edit') ."/" . $u->id . "'>click here to change your temporary password..</a>");
-
-               }catch (Exception $e)
-               {
-                   //create user in db
-                   try{
-                       $u = Sentry::register(array('email' => $input['email'], 'password' => $input['password']));
-                       $u->attemptActivation($u->GetActivationCode());
-                       Session::flash('info', 'User account for ' . $input['email'] . " created! <a href='" . URL::to('users/edit') ."/" . $u->id . "'>click here to change your temporary password..</a>");
-                   }
-                       catch (Exception $e)
-                   {
-                        Session::flash('error', $e->getMessage() );
-				        return Redirect::to('users/login')->withInput();
-                   }
-               }
-           }
-            else
-           {
-               Log::info("User " . $input["email"] . " NOT authenticated");
-           }
-       }
-
 
 		// Set Validation Rules
 		$rules = array (
@@ -345,6 +300,8 @@ class UserController extends BaseController {
 			    // Try to authenticate the user
 			    $user = Sentry::authenticate($credentials, $input['rememberMe']);
 
+			    //make sure this is refreshed on login
+                CronratApi::set_account($user);
 			}
 			catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
 			{
@@ -608,6 +565,19 @@ class UserController extends BaseController {
 		    //Get the current user's id.
 			Sentry::check();
 			$currentUser = Sentry::getUser();
+
+		    $levels = Config::get('cronrat.levels');
+
+            if(empty($levels[$currentUser->cronrat_level]))
+            {
+                $data = $levels[1];
+            }
+              else
+            {
+                $data = $levels[$currentUser->cronrat_level];
+            }
+
+            $data['ratsused'] = Rat::get_account_live_rats($currentUser->cronrat_code);
 
 		   	//Do they have admin access?
 			if ( $currentUser->hasAccess('admin'))

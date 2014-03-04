@@ -9,41 +9,19 @@ Edit Profile
 {{-- Content --}}
 @section('content')
 
-<h3>Edit
-@if ($user->email == Sentry::getUser()->email)
-	Your
-@else
-	{{ $user->email }}'s
-@endif
+<div id='info' class="ui-body alert-info">
+    <li>Your Cronrat Code is: <b>{{ Sentry::getUser()->cronrat_code }}</b></li>
+    <li>Cronrat Plan: <b>{{ $plan_name }}</b></li>
+    <li>Live Cronrats: <b>{{ count($ratsused) }} of {{ $ratlimit }}, available {{ ($ratlimit - count($ratsused)) }}</b></li>
+    <li>Job Frequency Limit: <b>{{$ttlmin}}min</b></li>
+    <li>Url Pull on failure: <b>{{ ($urlto)? 'Enabled' : 'Disable'}}</b></li>
+    <li>Alternative Email Address on failure: <b>{{ ($emailto)? 'Enabled' : 'Disable'}}</b></li>
 
-Profile</h3>
-<div class="well">
-	<form class="form-horizontal" action="{{ URL::to('users/edit') }}/{{ $user->id }}" method="post">
-        {{ Form::token() }}
-
-        <div class="control-group {{ ($errors->has('firstName')) ? 'error' : '' }}" for="firstName">
-        	<label class="control-label" for="firstName">First Name</label>
-    		<div class="controls">
-				<input name="firstName" value="{{ (Request::old('firstName')) ? Request::old("firstName") : $user->first_name }}" type="text" class="form-control" placeholder="First Name">
-    			{{ ($errors->has('firstName') ? $errors->first('firstName') : '') }}
-    		</div>
-    	</div>
-
-        <div class="control-group {{ $errors->has('lastName') ? 'error' : '' }}" for="lastName">
-        	<label class="control-label" for="lastName">Last Name</label>
-    		<div class="controls">
-				<input name="lastName" value="{{ (Request::old('lastName')) ? Request::old("lastName") : $user->last_name }}" type="text" class="form-control" placeholder="Last Name">
-    			{{ ($errors->has('lastName') ?  $errors->first('lastName') : '') }}
-    		</div>
-    	</div>
-
-    	<div class="form-actions top-buffer">
-	    	<input class="btn-primary btn" type="submit" value="Submit Changes" data-theme="{{Config::get('app.jqm_theme')}}">
-	    	<input class="btn-inverse btn" type="reset" value="Reset" data-theme="{{Config::get('app.jqm_theme_alt')}}">
-	    </div>
-    </form>
+<div data-role="controlgroup" data-type="horizontal" align='left'>
+        <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Upgrade $29/year (100 rats)</a>
 </div>
 
+</div>
 <h3>Change Password</h3>
 <div class="well">
 	<form class="form-horizontal" action="{{ URL::to('users/changepassword') }}/{{ $user->id }}" method="post">

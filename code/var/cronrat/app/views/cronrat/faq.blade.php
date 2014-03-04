@@ -51,13 +51,13 @@ Super Awesome Nice &copy; 2014 cronrat.com
     URLTOPULL (optional) -  (paid accounts only) the url to pull http or https upon alert
 
     example urls:
-    http://cronrat.com/r/f234abc/BackupMysqlWww
+    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww
     <i>will alert if job BackupMySQL not run in next 24 hours </i>
 
-    http://cronrat.com/r/f234abc/BackupMysqlWww/30/4155551212%40txt.att.net
+    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww/30/4155551212%40txt.att.net
     <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net (Note Url encoded @ is %40)</i>
 
-    http://cronrat.com/r/f234abc/BackupMysqlWww/30/4155551212%40txt.att.net/http%3A%2F%2Fmyserver.com%2Frebootsql.php
+    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww/30/4155551212%40txt.att.net/http%3A%2F%2Fmyserver.com%2Frebootsql.php
     <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
     and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
 
@@ -65,17 +65,17 @@ Super Awesome Nice &copy; 2014 cronrat.com
 
 From Crontab
 
-0 0 * * * /usr/bin/backintime  --backup-job  && curl http://cronrat.com/r/f234abc/BackupMysqlWww &> /dev/null
+0 0 * * * /usr/bin/backintime  --backup-job  && curl http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww &> /dev/null
 
 Or you can used from inside of your scripts, just call Cronrat url
 
 //Bash Example
-curl -l http://cronrat.com/r/f234abc/BackupMysqlWww &> /dev/null
+curl -l http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww &> /dev/null
 
 PHP example
 // create a new cURL resource
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "http://cronrat.com/r/f234abc/BackupMysqlWww");
+curl_setopt($ch, CURLOPT_URL, "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww");
 curl_setopt($ch, CURLOPT_HEADER, 0);
 curl_exec($ch);
 curl_close($ch);
@@ -83,20 +83,20 @@ curl_close($ch);
 //RUBY
 require "net/http"
 ...
-Net::HTTP.get("cronrat.com", "/r/f234abc/BackupMysqlWww")
+Net::HTTP.get("cronrat.com", "/r/{{$cronrat_code}}/BackupMysqlWww")
 
 //Python
 import webbrowser
 ...
-webbrowser.open("http://cronrat.com/r/f234abc/BackupMysqlWww")
+webbrowser.open("http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww")
 
 //Powershell
-powershell -ExecutionPolicy unrestricted -Command "(New-Object Net.WebClient).DownloadString(\"http://cronrat.com/r/f234abc/BackupMysqlWww\")"
+powershell -ExecutionPolicy unrestricted -Command "(New-Object Net.WebClient).DownloadString(\"http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww\")"
 
 //golang
 import "net/http"
 ..
-res, err := http.Get("http://cronrat.com/r/f234abc/BackupMysqlWww")
+res, err := http.Get("http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww")
 
 you got the idea right??
 

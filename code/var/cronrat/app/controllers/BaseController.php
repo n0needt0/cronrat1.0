@@ -8,6 +8,8 @@ use Lasdorf\Utils as Utils;
 
 use Lasdorf\FormattedJsonResponse\FormattedJsonResponse;
 
+use Lasdorf\CronratApi\CronratApi;
+
 class BaseController extends Controller {
 
 	/**

@@ -9,9 +9,8 @@ Log In
 @section('content')
 
 <div data-role="controlgroup" data-type="horizontal" align='center'>
-    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Register Free (2 rats)</a>
-    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Pro $29/year (20 rats)</a>
-    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Monster $99/year (100 rats)</a>
+    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Register Free (10 rats)</a>
+    <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Pro $29/year (100 rats)</a>
 </div>
 
 <h3>Login</h3>
