@@ -1,9 +1,4 @@
 server {
-  server_name www.cronrat.com;
-  return 301 $scheme://www.cronrat.com$request_uri;
-}
-
-server {
     listen 0.0.0.0:80 default deferred;
     server_name www.cronrat.net;
     access_log /var/log/nginx/cronrat.log;
@@ -24,12 +19,12 @@ server {
        expires max;
     }
     
-    #location / {
-    #        if ($http_host !~ "^www\.cronrat\.com$"){
-    #           rewrite ^(.*)$ http://www.cronrat.com redirect; 
-    #        }
-    #        try_files $uri $uri/ /index.php$is_args$args;
-    #   }
+    location / {
+            if ($http_host !~ "^www\.cronrat\.com$"){
+               rewrite ^(.*)$ http://www.cronrat.com redirect; 
+            }
+            try_files $uri $uri/ /index.php$is_args$args;
+       }
 
     # pass the PHP scripts to FastCGI server listening on /var/run/php5-fpm.sock
     location ~ \.php$ {
@@ -38,7 +33,6 @@ server {
                 fastcgi_index index.php;
                 fastcgi_cache_bypass 1;
                 fastcgi_no_cache 1;
-                
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                 include fastcgi_params;
         }
