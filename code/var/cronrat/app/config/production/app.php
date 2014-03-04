@@ -22,7 +22,7 @@ return array(
 */
 
 'jsdebug' => 'false',
-'debug_json' => true,
+'debug_json' => false,
 
 	/*
 	|--------------------------------------------------------------------------
