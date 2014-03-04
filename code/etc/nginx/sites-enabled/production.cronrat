@@ -23,7 +23,7 @@ server {
             if ($http_host !~ "^www\.cronrat\.com$"){
                rewrite ^(.*)$ http://www.cronrat.com redirect; 
             }
-            try_files $uri $uri/ /index.php$is_args$args;
+           try_files $uri $uri/ /index.php?$query_string;
        }
 
     # pass the PHP scripts to FastCGI server listening on /var/run/php5-fpm.sock
