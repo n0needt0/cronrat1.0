@@ -57,9 +57,11 @@ $(document).on("pagecreate", function (e) {
 	@if($errors->has('error'))
 	<div class="alert alert-danger">{{$errors->first('err')}}</div>
 	@endif
-
+  <?php
+  date_default_timezone_set('UTC');
+  ?>
 	<div data-role="collapsible" data-collapsed="false">
-		<h2>My Cron Rats</h2>
+		<h2>My Cron Rats as of : {{date('Y-m-d h:i:s T',time())}}</h2>
         <ul id="ratlist" data-role="listview" >
 
         @foreach ($rats as $rat)
