@@ -50,7 +50,7 @@ Class CronratApi extends CronratBase{
     {
         $result = Redis::get($ratkey);
 
-        if($result === false)
+        if($result == false)
         {
             \Log::info("miss $ratkey");
             return false;
@@ -228,7 +228,7 @@ Class CronratApi extends CronratBase{
             }
         }
 
-        if($emailto != $acct['email'] && !$acct['emailto'])
+        if($emailto && $emailto != $acct['email'] && !$acct['emailto'])
         {
             throw new \Exception("Alternative Email feature is disabled. Upgrade account!");
             return false;
