@@ -6,9 +6,14 @@
 
 $(document).on("pagecreate", function (e) {
 
+    $( ".popupRat" ).bind({
+        popupafterclose: function(event, ui) { $('#info').html(''); }
+     });
+
     $(".ratId").on("click",function(){
         $(".popupRat").popup("close");
-        var cid =$(this).attr("id");
+        var cid = $(this).attr("id");
+        $('#info').html( 'Cronrat Url: ' + $(this).attr("ref"));
         $("#actor").val(cid);
         debug(cid)
     });
@@ -40,12 +45,11 @@ $(document).on("pagecreate", function (e) {
 <div id='info' class="ui-body alert-info">
 @if(empty($rats))
 <h4>Where are my rats?</h4>
-<h4>click <a href=" {{Config::get('app.url')}}/r/{{$cronrat_code}}/MyTestRat" target="_new"> {{Config::get('app.url')}}/r/coOSSWrq/TEST</a> to test</h4>
+<h4>click <a href=" {{Config::get('app.url')}}/r/{{$cronrat_code}}/MyTestRat" target="_new"> {{Config::get('app.url')}}/r/coOSSWrq/MyTestRat</a> to test</h4>
 <h4>then refresh this page</h4>
 <h4>read FAQ on how to use Cronrat</h4>
-
 @endif
-    </div>
+</div>
 
 
 <div id="addCronrat" data-role="collapsible-set" data-theme="a" data-content-theme="a">
@@ -59,7 +63,14 @@ $(document).on("pagecreate", function (e) {
         <ul id="ratlist" data-role="listview" >
 
         @foreach ($rats as $rat)
-        <li><a href="#popupRat" data-rel="popup" data-transition="slideup" class="ratId" id="{{ $rat['cronrat_code'] }}"><img  id="{{ $rat['cronrat_code'] }}_img" src="/assets/images/{{ $rat['active'] }}.png" alt="ok" class="ui-li-icon ui-corner-none"> as of {{ date('m/d/y h:i:s', $rat['ts']) }} | Rat Name : {{ $rat['cronrat_name'] }}</a></li>
+        <li>
+        <a href="#popupRat" data-rel="popup" data-transition="slideup" class="ratId"
+        id="{{ $rat['cronrat_code'] }}"
+        ref="{{ Config::get('app.url')}}/r/{{ str_replace('::::','/',$rat['cronrat_code'])}}/{{$rat['ttl']}}{{(empty($rat['email']))?'':'/'. urlencode($rat['email'])}}
+        {{ (empty($rat['url']))?'':'/'. urlencode($rat['url'])}}">
+        <img  id="{{ $rat['cronrat_code'] }}_img" src="/assets/images/{{ $rat['active'] }}.png" alt="ok" class="ui-li-icon ui-corner-none">
+        as of {{ date('m/d h:i', $rat['ts']) }} |
+        Rat Name : {{ $rat['cronrat_name'] }} {{ (empty($rat['nextcheck']))?'': '| Next Check: ' . date('m/d h:i', $rat['nextcheck']) }}</a></li>
         @endforeach
 		</ul>
 	</div>

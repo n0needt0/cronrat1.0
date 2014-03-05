@@ -60,6 +60,8 @@ class RatCheck extends Command {
             //get all expected rats
             $expected = Rat::get_expected_rats();
 
+            $this->debug("expecting" . print_r($expected, true));
+
             foreach($expected as $ek => $ev)
             {
                 $rp = explode('::', $ek);
@@ -69,8 +71,11 @@ class RatCheck extends Command {
                     continue;
                 }
 
-                $livekey = str_replace('::spec::', '::status::', $ek);
-                $deadratkey = str_replace('::spec::', '::dead::', $ek);
+                $livekey = str_replace('::specs::', '::status::', $ek);
+                $deadratkey = str_replace('::specs::', '::dead::', $ek);
+
+                $this->debug("livekey: $livekey");
+                $this->debug("deadratkey: $deadratkey");
 
                 if(Rat::lookup($livekey))
                 {
@@ -156,7 +161,7 @@ class RatCheck extends Command {
             fclose($handle);
         }
 
-        return "\n</br>\n</br>\n</br>" . $buffer;
+        return "\n</br>\n</br>\n</br>*************RANDOM TEXT TO ESCAPE SPAM FILTER****************************\n</br>\n</br>\n</br>" . $buffer;
   }
 
 }
