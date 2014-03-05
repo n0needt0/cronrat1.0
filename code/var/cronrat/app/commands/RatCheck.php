@@ -57,6 +57,10 @@ class RatCheck extends Command {
         }
 
         try{
+
+            //refresh accounts from db
+            Rat::refresh_accounts_from_db();
+
             //get all expected rats
             $expected = Rat::get_expected_rats();
 
