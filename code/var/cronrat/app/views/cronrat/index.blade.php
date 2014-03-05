@@ -7,7 +7,10 @@
 $(document).on("pagecreate", function (e) {
 
     $( ".popupRat" ).bind({
-        popupafterclose: function(event, ui) { $('#info').html(''); }
+
+        popupafterclose: function(event, ui) {
+            setTimeout(function(){$('#info').html('');},15000);
+            }
      });
 
     $(".ratId").on("click",function(){
@@ -19,7 +22,6 @@ $(document).on("pagecreate", function (e) {
     });
 
     $(".ratDelete").bind("click", function(){
-        var cid =   $("#cid").val();
 
         $(".popupRat").popup("close");
         try{
