@@ -2,8 +2,7 @@
 
 {{-- Web site Title --}}
 @section('title')
-@parent
-Edit Profile
+Cronrat::Edit Profile
 @stop
 
 {{-- Content --}}

@@ -25,8 +25,6 @@ $(document).on("pagecreate", function (e) {
 
         $(".popupRat").popup("close");
         try{
-
-                   debug(cid);
                    $('#action').val('delete');
                    $('#update').submit();
               }catch (err){

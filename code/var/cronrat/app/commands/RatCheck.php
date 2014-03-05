@@ -55,7 +55,7 @@ class RatCheck extends Command {
             $this->error('--env option required! local|production');
             die;
         }
-
+throw new Exception('test');
         try{
 
             //refresh accounts from db
