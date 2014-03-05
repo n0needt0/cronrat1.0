@@ -16,7 +16,7 @@ $(document).on("pagecreate", function (e) {
     $(".ratId").on("click",function(){
         $(".popupRat").popup("close");
         var cid = $(this).attr("id");
-        $('#info').html( 'Cronrat Url: ' + $(this).attr("ref"));
+        $('#info').html($(this).attr("ref"));
         $("#actor").val(cid);
         debug(cid)
     });
