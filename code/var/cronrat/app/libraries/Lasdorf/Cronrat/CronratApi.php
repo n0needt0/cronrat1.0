@@ -46,7 +46,7 @@ Class CronratApi extends CronratBase{
      * check for key in redis
      * @param string $ratkey
      */
-    protected static function lookup($ratkey)
+    public static function lookup($ratkey)
     {
         $result = Redis::get($ratkey);
 
@@ -59,7 +59,7 @@ Class CronratApi extends CronratBase{
         return unserialize($result);
     }
 
-    protected static function lookup_pattern($pattern)
+    public static function lookup_pattern($pattern)
     {
         $keys = Redis::keys($pattern);
 
@@ -77,7 +77,7 @@ Class CronratApi extends CronratBase{
      * @param mixed $value
      * @param int $ttlsec
      */
-    protected static function store($ratkey, $value, $ttlsec)
+    public static function store($ratkey, $value, $ttlsec)
     {
         if( Redis::set($ratkey, serialize($value)) )
         {
@@ -195,7 +195,10 @@ Class CronratApi extends CronratBase{
          Redis::del($rediskey);
          $rediskey = str_replace('::::', '::specs::', $ratid);
          Redis::del($rediskey);
+         $rediskey = str_replace('::::', '::dead::', $ratid);
+         Redis::del($rediskey);
     }
+
 
 
     /**
@@ -267,5 +270,33 @@ Class CronratApi extends CronratBase{
 
         //set url
         return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto);
+    }
+
+    public static function get_expected_rats()
+    {
+        $pattern = '*::specs::*';
+        return self::lookup_pattern($pattern);
+    }
+
+    public static function get_dead_rats()
+    {
+        $pattern = '*::dead::*';
+        return self::lookup_pattern($pattern);
+    }
+
+    public static function get_live_rats()
+    {
+        $pattern = '*::status::*';
+        return self::lookup_pattern($pattern);
+    }
+
+    public static function remove_dead_rat($deadratkey)
+    {
+        Redis::del($deadratkey);
+    }
+
+    public static function mark_dead($deadratkey, $data)
+    {
+        return self::store($deadratkey, $data, 7 * 24 * 60 * 60);
     }
 }

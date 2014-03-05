@@ -3,6 +3,7 @@
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use \Lasdorf\CronratApi\CronratApi as Rat;
 
 class RatCheck extends Command {
 
@@ -56,50 +57,56 @@ class RatCheck extends Command {
         }
 
         try{
+            //get all expected rats
+            $expected = Rat::get_expected_rats();
 
-            //get all rats
-            $sql = "SELECT * FROM cronrat WHERE verify=''";
-            $this->rats = DB::table("cronrat")->get();
-            $this->debug(print_r($this->rats, true));
-
-            Redis::pipeline(function($pipe)
+            foreach($expected as $ek => $ev)
             {
-                $this->debug("Updating Valid Cronrats");
-                foreach ($this->rats as $row)
+                $rp = explode('::', $ek);
+                if(count($rp) != 3)
                 {
-                    $pipe->set($row->cronrat_code . ":VALID", $row->ttl);
-                    $pipe->expire($row->cronrat_code . ":VALID",60*60); // revalidate every hour
+                    $this->error("Invalid rat key $ek");
+                    continue;
                 }
 
-                $this->debug("Updating Valid Cronrats: Done");
-            });
+                $livekey = str_replace('::spec::', '::status::', $ek);
+                $deadratkey = str_replace('::spec::', '::dead::', $ek);
 
-            //check if up to date
-           foreach ($this->rats as $row)
-           {
-               if($row->active == 1)
-              {
-                  if( $ts = Redis::get($row->cronrat_code . ':RAT') )
-                  {
-                      if($ts + $row->ttl < time())
-                      {
-                          //expired call the owner
-                          $exp = array('cronrat_name'=>$row->cronrat_name, 'cronrat_code'=>$row->cronrat_code, 'email'=>$row->fail_email);
-                          $this->notify($exp);
-                          $this->debug('Expired ' . print_r($exp, true));
-                      }
-                  }
-                    else
-                  {
-                      //expired call the owner
-                      $exp = array('cronrat_name'=>$row->cronrat_name, 'cronrat_code'=>$row->cronrat_code, 'email'=>$row->fail_email);
-                      $this->notify($exp);
-                      $this->debug('Expired ' . print_r($exp, true));
-                  }
-              }
-           }
+                if(Rat::lookup($livekey))
+                {
+                    //rat is live
+                    if(Rat::lookup($deadratkey))
+                    {
+                        Rat::remove_dead_rat($deadratkey);
+                        $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
+                        $this->notify_up($exp);
+                        $this->debug('Alive again ' . print_r($exp, true));
+                    }
+                }
+                 else
+                {
+                    //rat died
+                    $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
 
+                    if(!$deadrat = Rat::lookup($deadratkey))
+                    {
+                        //first time rat dies, mark it and notify
+                        Rat::mark_dead($deadratkey, array('cnt'=>1, 'ts'=>time()));
 
+                        $this->notify_down($exp);
+                        $this->debug('Expired ' . print_r($exp, true));
+                    }
+                     else
+                    {
+                        if(!empty($deadrat['cnt']) && $deadrat['cnt'] < 3)
+                        {
+                            Rat::mark_dead($deadratkey, array('cnt'=>($deadrat['cnt']+1), 'ts'=>time()));
+                            $this->notify_down($exp);
+                            $this->debug('Expired ' . print_r($exp, true));
+                        }
+                    }
+                }
+            }
         }
         catch(Exception $e)
         {
@@ -107,12 +114,49 @@ class RatCheck extends Command {
         }
     }
 
-    private function notify($data)
+    private function notify_down($data)
     {
+        $data['random'] = $this->get_random_text();
+
          Mail::send('emails.cronrat.down', $data, function($message) use ($data)
          {
             $message->to($data['email'])->subject($data['cronrat_name'] . ' Cronrat is down!');
          });
     }
+
+    private function notify_up($data)
+    {
+         $data['random'] = $this->get_random_text();
+
+         Mail::send('emails.cronrat.up', $data, function($message) use ($data)
+         {
+            $message->to($data['email'])->subject($data['cronrat_name'] . ' Recovered!');
+         });
+    }
+
+  function get_random_text()
+  {
+        $file = __DIR__ . '/misc/random.txt';
+        $returnlines = 20;
+        $i=0;
+        $buffer="\n";
+        $rand = rand(1, filesize($file));
+
+        $handle = @fopen($file, "r");
+        fseek($handle, $rand);
+
+        if ($handle)
+        {
+            while (!feof($handle) && $i<=$returnlines)
+            {
+                 $buffer .= fgets($handle, 4096);
+                 $i++;
+            }
+
+            fclose($handle);
+        }
+
+        return "\n</br>\n</br>\n</br>" . $buffer;
+  }
 
 }
