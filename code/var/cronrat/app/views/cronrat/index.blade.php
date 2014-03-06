@@ -72,7 +72,7 @@ $(document).on("pagecreate", function (e) {
         {{ (empty($rat['url']))?'':'/'. urlencode($rat['url'])}}">
         <img  id="{{ $rat['cronrat_code'] }}_img" src="/assets/images/{{ $rat['active'] }}.png" alt="ok" class="ui-li-icon ui-corner-none">
         as of {{ date('m/d h:i', $rat['ts']) }} |
-        {{ (empty($rat['nextcheck']))?'': '| Next Check: ' . date('m/d h:i', $rat['nextcheck']) }} | name : {{ $rat['cronrat_name'] }}</a></li>
+        {{ (empty($rat['nextcheck']))?'': 'ext Check: ' . date('m/d h:i', $rat['nextcheck']) }} | {{ $rat['cronrat_name'] }}</a></li>
         @endforeach
 		</ul>
 	</div>
