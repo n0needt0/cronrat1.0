@@ -87,14 +87,12 @@
 <div data-role="header" data-theme="{{Config::get('app.jqm_theme')}}">
     <div data-role="navbar">
     <ul>
-		<li><a href="{{ URL::to('/') }}"> {{Config::get('app.app_name')}} </a></li>
-		<li><a href="{{ URL::to('/help') }}">FAQ</a></li>
-		@if (Sentry::check())
-		<li><a href="{{ URL::to('/users/edit/'.Sentry::getUser()->id) }}">Profile</a></li>
-		@endif
 		@if (!Sentry::check())
 		<li><a href="{{ URL::to('/in') }}">Login</a></li>
 		@else
+		<li><a href="{{ URL::to('/') }}"> {{Config::get('app.app_name')}} </a></li>
+		<li><a href="{{ URL::to('/help') }}">FAQ</a></li>
+		<li><a href="{{ URL::to('/users/edit/'.Sentry::getUser()->id) }}">Profile</a></li>
 		<li><a href="{{ URL::to('users/logout') }}">Logout</a></li>
 		@endif
 	</ul>
