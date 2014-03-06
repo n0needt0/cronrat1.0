@@ -2,7 +2,7 @@
 <html>
 <head>
 <link rel="shortcut icon" href="favicon.ico">
-<title>@yield('title', isset($title) ? $title : "title")</title>
+<title>Cronrat.com Cron Monitoring and Solution to Cron Spam</title>
 <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <meta HTTP-EQUIV="Expires" CONTENT="-1">
 <meta charset="utf-8">
