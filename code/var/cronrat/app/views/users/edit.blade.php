@@ -16,10 +16,6 @@ Cronrat::Edit Profile
     <li>Url Pull on failure: <b>{{ ($urlto)? 'Enabled' : 'Disable'}}</b></li>
     <li>Alternative Email Address on failure: <b>{{ ($emailto)? 'Enabled' : 'Disable'}}</b></li>
 
-<div data-role="controlgroup" data-type="horizontal" align='left'>
-        <a href="{{ URL::to('users/register') }}" data-rel="dialog" data-role="button">Upgrade $29/year (100 rats)</a>
-</div>
-
 </div>
 <h3>Change Password</h3>
 <div class="well">
