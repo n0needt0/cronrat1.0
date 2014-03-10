@@ -92,8 +92,59 @@ class RatCheck extends Command {
                         $this->debug('Alive again ' . print_r($exp, true));
                     }
                 }
-                 else
+                  else
                 {
+                    //check if should even test on this day
+                    if(!empty($ev['activeon']))
+                    {
+                        $weekday = date(w,time());
+                        switch ($weekday)
+                        {
+                            case 0: //SUNDAY
+                                if(!empty(substr($ev['activeon'],6,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 1: //MONDAY
+                                if(!empty(substr($ev['activeon'],0,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 2: //TuESDAY
+                                if(!empty(substr($ev['activeon'],1,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 3: //WED
+                                if(!empty(substr($ev['activeon'],2,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 4: //THUR
+                                if(!empty(substr($ev['activeon'],3,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 5: //FRI
+                                if(!empty(substr($ev['activeon'],4,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                            case 6: //SAT
+                                if(!empty(substr($ev['activeon'],5,1)))
+                                {
+                                    continue;
+                                }
+                                break;
+                        }
+
+                    }
                     //rat died
                     $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
 

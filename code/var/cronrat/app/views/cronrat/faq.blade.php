@@ -42,24 +42,32 @@ Super Awesome Nice &copy; 2014 cronrat.com
 
      such as this:
 
-    http(s)://cronrat.com/r/CRONRATKEY/JOBNAME/[NEXTCHECK]/[EMAILTO]/[URLTOPULL]
-    CRONRATKEY (required) - cronrat key you receive for your account
-    JOBNAME (required, max 256 char) - Unique (for your account) Alert name, alphanumeric URL encoded please
-    NEXTCHECK (optional) - a number of MINUTES to wait for next checkin before alert. Minimum 15, max 10080, default 1440.
-        (make sure to pad based on your needs i.e. if it takes your job to run 5 minutes every 30 minutes, set NEXTCHECK to 35 or even 40 minutes )
-    EMAILTO (optional) - by default alert will be sent to registered email (paid accountscan overwrite it here)
-    URLTOPULL (optional) -  (paid accounts only) the url to pull http or https upon alert
+    http(s)://cronrat.com/r/CRONRATKEY/JOBNAME ? [NEXTCHECK= minutes]&[EMAILTO=string]&[URLTO=string]&[ACTIVEON=string]
+    <b>CRONRATKEY</b> (required) - cronrat key you receive for your account
+    <b>JOBNAME</b> (required, max 256 char) - Unique (for your account) Alert name, alphanumeric URL encoded please
+    <b>NEXTCHECK</b> (optional) - a time MINUTES to wait for next check before alert (default 1440 = 24 hours).
+    <b>EMAILTO </b>(optional) - by default alert will be sent to registered email (paid accountscan overwrite it here)
+    <b>URLTO</b>(optional) -  (paid accounts only) the url to pull http or https upon alert
+    <b>ACTIVEON</b> (optional) - a flag that allows "skipping" of a check on some weekdays.
+         defined as string of 7 day characters starting from Monday through Sunday "MTWTFSS" or (1111111)  where, if day character at position replaced with 0, the check will not run on that day.
+         Example MTWTF00 or 1111100 will only run on weekdays and skip saturday and sunday.
+         this is good for obs that do not run on say weekeds. Default is to run everyday.
 
     example urls:
     http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww
     <i>will alert if job BackupMySQL not run in next 24 hours </i>
 
-    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww/30/4155551212%40txt.att.net
+    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net
     <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net (Note Url encoded @ is %40)</i>
 
-    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww/30/4155551212%40txt.att.net/http%3A%2F%2Fmyserver.com%2Frebootsql.php
+    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php
     <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
     and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
+
+    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php&ACTIVEON=MTWTF00
+    <i>Active only on weekdays and will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
+    and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
+
 
 3. Integration Into Various scripts
 

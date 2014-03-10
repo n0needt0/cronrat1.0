@@ -169,7 +169,7 @@ Class CronratApi extends CronratBase{
         }
     }
 
-    private static function set_rat($ratkey, $ratname, $ttl, $email, $url)
+    private static function set_rat($ratkey, $ratname, $ttl, $email, $url, $activeon)
     {
         //pad ttl by minimum 5 minutes or 20% of %ttl to reduce flapping
         $ttlpadding = ( floor($ttl/5) > 5)? $ttl + floor(ttl/5) : $ttl + 5;
@@ -177,9 +177,10 @@ Class CronratApi extends CronratBase{
          $r = self::store($ratkey . '::status::' . $ratname, time(), $ttl * 60 + ( floor($ttl/5) + 5) * 60);
 
          //set specs array, this is what tells us what we expect should be alive and what to do if not
-         $spec = array('ttl'=>$ttl, 'email'=>$email, 'url'=>$url);
+         $spec = array('ttl'=>$ttl, 'email'=>$email, 'url'=>$url, 'activeon'=>$activeon);
 
-         //this tracks what we expect to be live
+         //this tracks specs of a job , these are alive for 7 days
+
          $s = self::store($ratkey . '::specs::' . $ratname, $spec, 7 * 24 * 60 * 60);
 
          if( $r && $s)
@@ -213,7 +214,7 @@ Class CronratApi extends CronratBase{
      * @return boolean
      */
 
-    public static function check_set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto)
+    public static function check_set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon)
     {
         //this function sets rat key ast ttl and rat spec key at ttl of 48 hr.
         //this also sets index key as index::$ratkey = 1 of ttl of 48 hr
@@ -270,7 +271,7 @@ Class CronratApi extends CronratBase{
         }
 
         //set url
-        return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto);
+        return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon);
     }
 
     public static function get_expected_rats()
