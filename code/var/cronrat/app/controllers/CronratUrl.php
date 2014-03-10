@@ -10,10 +10,38 @@ class CronratUrl extends BaseController {
 
         //see if ratkey is valid 404 otherwise
 
-        $nextcheck=Input::Get('NEXTCHEK',1440);
+        $nextcheck=Input::Get('NEXTCHECK',false);
+        if(empty($nextcheck)) //trylowercase
+        {
+            $nextcheck=Input::Get('nextcheck',false);
+        }
+        if(empty($nextcheck)) //trylowercase
+        {
+            $nextcheck=1440; //default 1440 min 24hr
+        }
+
+
         $emailto=Input::Get('EMAILTO',false);
+        if(empty($emailto)) //trylowercase
+        {
+            $emailto=Input::Get('emailto',false);
+        }
+
         $urlto=Input::Get('URLTO',false);
-        $activeon=Input::Get('ACTIVEON','MTWTFSS');
+        if(empty($urlto)) //trylowercase
+        {
+            $urlto=Input::Get('urlto',false);
+        }
+
+        $activeon=Input::Get('ACTIVEON',false);
+        if(empty($activeon)) //trylowercase
+        {
+            $activeon=Input::Get('activeon',false);
+        }
+        if(empty($activeon)) //trylowercase
+        {
+            $activeon='MTWTFSS';
+        }
 
         try{
             $res = Rat::check_set_rat($ratkey, $ratname, $nextcheck, $emailto, $urlto, $activeon);

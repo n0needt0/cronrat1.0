@@ -68,6 +68,66 @@ class RatCheck extends Command {
 
             foreach($expected as $ek => $ev)
             {
+                                //check if should even test on this day
+                    if(!empty($ev['activeon']))
+                    {
+                        $weekday = date('w',time());
+
+                        switch (intval($weekday))
+                        {
+                            case 0: //SUNDAY
+                                if(empty(substr($ev['activeon'],6,1)))
+                                {
+                                    $this->info("Skip on Sunday");
+                                    continue;
+                                }
+                                break;
+                            case 1: //MONDAY
+
+                                if(empty(substr($ev['activeon'],0,1)))
+                                {
+                                    $this->info("Skip on Monday");
+                                    continue;
+                                }
+                                break;
+                            case 2: //TuESDAY
+                                if(empty(substr($ev['activeon'],1,1)))
+                                {
+                                    $this->info("Skip on Tuesday");
+                                    continue;
+                                }
+                                break;
+                            case 3: //WED
+                                if(empty(substr($ev['activeon'],2,1)))
+                                {
+                                    $this->info("Skip on Wed");
+                                    continue;
+                                }
+                                break;
+                            case 4: //THUR
+                                if(empty(substr($ev['activeon'],3,1)))
+                                {
+                                    $this->info("Skip on Thur");
+                                    continue;
+                                }
+                                break;
+                            case 5: //FRI
+                                if(empty(substr($ev['activeon'],4,1)))
+                                {
+                                    $this->info("Skip on Fri");
+                                    continue;
+                                }
+                                break;
+                            case 6: //SAT
+                                if(empty(substr($ev['activeon'],5,1)))
+                                {
+                                    $this->info("Skip on Saturday");
+                                    continue;
+                                }
+                                break;
+                        }
+                    }
+
                 $rp = explode('::', $ek);
                 if(count($rp) != 3)
                 {
@@ -94,57 +154,6 @@ class RatCheck extends Command {
                 }
                   else
                 {
-                    //check if should even test on this day
-                    if(!empty($ev['activeon']))
-                    {
-                        $weekday = date(w,time());
-                        switch ($weekday)
-                        {
-                            case 0: //SUNDAY
-                                if(!empty(substr($ev['activeon'],6,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 1: //MONDAY
-                                if(!empty(substr($ev['activeon'],0,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 2: //TuESDAY
-                                if(!empty(substr($ev['activeon'],1,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 3: //WED
-                                if(!empty(substr($ev['activeon'],2,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 4: //THUR
-                                if(!empty(substr($ev['activeon'],3,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 5: //FRI
-                                if(!empty(substr($ev['activeon'],4,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                            case 6: //SAT
-                                if(!empty(substr($ev['activeon'],5,1)))
-                                {
-                                    continue;
-                                }
-                                break;
-                        }
-
-                    }
                     //rat died
                     $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
 

@@ -172,7 +172,7 @@ Class CronratApi extends CronratBase{
     private static function set_rat($ratkey, $ratname, $ttl, $email, $url, $activeon)
     {
         //pad ttl by minimum 5 minutes or 20% of %ttl to reduce flapping
-        $ttlpadding = ( floor($ttl/5) > 5)? $ttl + floor(ttl/5) : $ttl + 5;
+        $ttlpadding = ( floor($ttl/5) > 5)? $ttl + floor($ttl/5) : $ttl + 5;
          //set status key , this is signifies that rat is running
          $r = self::store($ratkey . '::status::' . $ratname, time(), $ttl * 60 + ( floor($ttl/5) + 5) * 60);
 
