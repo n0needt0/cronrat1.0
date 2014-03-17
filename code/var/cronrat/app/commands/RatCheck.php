@@ -64,7 +64,7 @@ class RatCheck extends Command {
             //get all expected rats
             $expected = Rat::get_expected_rats();
 
-            $this->debug("expecting" . print_r($expected, true));
+            $this->info("expecting" . print_r($expected, true));
 
             foreach($expected as $ek => $ev)
             {
