@@ -68,7 +68,9 @@ class RatCheck extends Command {
 
             foreach($expected as $ek => $ev)
             {
-                                //check if should even test on this day
+                    $docheck = true;
+
+                    //check if should even test on this day
                     if(!empty($ev['activeon']))
                     {
                         $weekday = date('w',time());
@@ -79,7 +81,7 @@ class RatCheck extends Command {
                                 if(empty(substr($ev['activeon'],6,1)))
                                 {
                                     $this->info("Skip on Sunday");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                             case 1: //MONDAY
@@ -87,93 +89,97 @@ class RatCheck extends Command {
                                 if(empty(substr($ev['activeon'],0,1)))
                                 {
                                     $this->info("Skip on Monday");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                             case 2: //TuESDAY
                                 if(empty(substr($ev['activeon'],1,1)))
                                 {
                                     $this->info("Skip on Tuesday");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                             case 3: //WED
                                 if(empty(substr($ev['activeon'],2,1)))
                                 {
                                     $this->info("Skip on Wed");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                             case 4: //THUR
                                 if(empty(substr($ev['activeon'],3,1)))
                                 {
                                     $this->info("Skip on Thur");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                             case 5: //FRI
                                 if(empty(substr($ev['activeon'],4,1)))
                                 {
                                     $this->info("Skip on Fri");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                             case 6: //SAT
                                 if(empty(substr($ev['activeon'],5,1)))
                                 {
                                     $this->info("Skip on Saturday");
-                                    continue;
+                                    $docheck = false;
                                 }
                                 break;
                         }
                     }
 
-                $rp = explode('::', $ek);
-                if(count($rp) != 3)
+                if($docheck)
                 {
-                    $this->error("Invalid rat key $ek");
-                    continue;
-                }
-
-                $livekey = str_replace('::specs::', '::status::', $ek);
-                $deadratkey = str_replace('::specs::', '::dead::', $ek);
-
-                $this->debug("livekey: $livekey");
-                $this->debug("deadratkey: $deadratkey");
-
-                if(Rat::lookup($livekey))
-                {
-                    //rat is live
-                    if(Rat::lookup($deadratkey))
-                    {
-                        Rat::remove_dead_rat($deadratkey);
-                        $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
-                        $this->notify_up($exp);
-                        $this->debug('Alive again ' . print_r($exp, true));
-                    }
-                }
-                  else
-                {
-                    //rat died
-                    $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
-
-                    if(!$deadrat = Rat::lookup($deadratkey))
-                    {
-                        //first time rat dies, mark it and notify
-                        Rat::mark_dead($deadratkey, array('cnt'=>1, 'ts'=>time()));
-
-                        $this->notify_down($exp);
-                        $this->debug('Expired ' . print_r($exp, true));
-                    }
-                     else
-                    {
-                        if(!empty($deadrat['cnt']) && $deadrat['cnt'] < 3)
+                        $rp = explode('::', $ek);
+                        if(count($rp) != 3)
                         {
-                            Rat::mark_dead($deadratkey, array('cnt'=>($deadrat['cnt']+1), 'ts'=>time()));
-                            $this->notify_down($exp);
-                            $this->debug('Expired ' . print_r($exp, true));
+                            $this->error("Invalid rat key $ek");
+                            continue;
                         }
-                    }
+
+                        $livekey = str_replace('::specs::', '::status::', $ek);
+                        $deadratkey = str_replace('::specs::', '::dead::', $ek);
+
+                        $this->debug("livekey: $livekey");
+                        $this->debug("deadratkey: $deadratkey");
+
+                        if(Rat::lookup($livekey))
+                        {
+                            //rat is live
+                            if(Rat::lookup($deadratkey))
+                            {
+                                Rat::remove_dead_rat($deadratkey);
+                                $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
+                                $this->notify_up($exp);
+                                $this->debug('Alive again ' . print_r($exp, true));
+                            }
+                        }
+                          else
+                        {
+                            //rat died
+                            $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
+
+                            if(!$deadrat = Rat::lookup($deadratkey))
+                            {
+                                //first time rat dies, mark it and notify
+                                Rat::mark_dead($deadratkey, array('cnt'=>1, 'ts'=>time()));
+
+                                $this->notify_down($exp);
+                                $this->debug('Expired ' . print_r($exp, true));
+                            }
+                             else
+                            {
+                                if(!empty($deadrat['cnt']) && $deadrat['cnt'] < 3)
+                                {
+                                    Rat::mark_dead($deadratkey, array('cnt'=>($deadrat['cnt']+1), 'ts'=>time()));
+                                    $this->notify_down($exp);
+                                    $this->debug('Expired ' . print_r($exp, true));
+                                }
+                            }
+                        }
+
                 }
             }
         }

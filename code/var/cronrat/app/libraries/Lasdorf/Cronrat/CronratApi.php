@@ -179,9 +179,9 @@ Class CronratApi extends CronratBase{
          //set specs array, this is what tells us what we expect should be alive and what to do if not
          $spec = array('ttl'=>$ttl, 'email'=>$email, 'url'=>$url, 'activeon'=>$activeon);
 
-         //this tracks specs of a job , these are alive for 7 days
+         //this tracks specs of a job , these are alive for 30 days
 
-         $s = self::store($ratkey . '::specs::' . $ratname, $spec, 7 * 24 * 60 * 60);
+         $s = self::store($ratkey . '::specs::' . $ratname, $spec, 30 * 24 * 60 * 60);
 
          if( $r && $s)
          {
