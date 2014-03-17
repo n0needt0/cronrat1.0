@@ -18,7 +18,7 @@ $(document).on("pagecreate", function (e) {
 @section('content')
 
 <h2>Cron biggest problem</h2>
-<p>All we want is to know when scheduled job fails, instead we get message when jobs succeeda :(</p>
+<p>All i [you, him, us, everyone..] want is to know when scheduled job fails, instead i [you, him, us, everyone..] want get message when jobs succeeds :(</p>
 <h2>Well this is about to change!</h2>
 
 <h2>What is Cronrat?!</h2>
