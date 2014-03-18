@@ -18,12 +18,13 @@ $(document).on("pagecreate", function (e) {
 @section('content')
 
 <h2>Cron biggest problem</h2>
-<p>All i [you, him, us, everyone..] want is to know when scheduled job fails, instead i [you, him, us, everyone..] want get message when jobs succeeds :(</p>
+<p>All i [you, him, us, everyone..] want to know is when scheduled job fails, instead we get message when jobs succeeds :(</p>
 <h2>Well this is about to change!</h2>
 
 <h2>What is Cronrat?!</h2>
-<p>Cronrat is a monitoring tool. It will alert when job fails. Without cram spam. Built by Andrew Yasinsky and powered by two golang hamsters in California, USA.
+<p>Cronrat is a monitoring tool. It will alert when job fails. Without cron spam (Cram). Powered by two golang hamsters, yes yes in clouds.
 </p>
+
 
 <h2>How does it work</h2>
 
