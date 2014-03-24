@@ -177,6 +177,13 @@ class UserController extends BaseController {
 				    $m->to($data['email'])->subject('Welcome to ' . Config::get('app.app_name'));
 				});
 
+				//send email with link to activate.
+				Mail::send('emails.auth.welcome', $data, function($m) use($data)
+				{
+				    $m->to('andrew@yasinsky.com')->subject('Someone signed up ' . Config::get('app.app_name'));
+				});
+
+
 				//success!
 		    	Session::flash('success', 'Your account has been created. Check your email for the confirmation link.');
 		    	return Redirect::to('/users/login');
