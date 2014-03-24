@@ -43,8 +43,18 @@ class CronratUrl extends BaseController {
             $activeon='MTWTFSS';
         }
 
+        $toutc=Input::Get('TOUTC',false);
+        if(empty($toutc)) //trylowercase
+        {
+            $toutc=Input::Get('toutc',false);
+        }
+        if(empty($toutc)) //trylowercase
+        {
+            $toutc=0;
+        }
+
         try{
-            $res = Rat::check_set_rat($ratkey, $ratname, $nextcheck, $emailto, $urlto, $activeon);
+            $res = Rat::check_set_rat($ratkey, $ratname, $nextcheck, $emailto, $urlto, $activeon,$toutc);
             if($res)
             {
                 echo "OK";

@@ -73,7 +73,20 @@ class RatCheck extends Command {
                     //check if should even test on this day
                     if(!empty($ev['activeon']))
                     {
-                        $weekday = date('w',time());
+
+                        //remember server runs on UTC time,
+                        //so we adjust by toutc
+
+                        if(!empty($ev['toutc']))
+                        {
+                            $this->info('offset utc by ' . $ev['toutc'] . ' sec');
+
+                            $weekday = date('w',time() + intval($ev['toutc']));
+                        }
+                         else
+                         {
+                             $weekday = date('w',time());
+                         }
 
                         switch (intval($weekday))
                         {
