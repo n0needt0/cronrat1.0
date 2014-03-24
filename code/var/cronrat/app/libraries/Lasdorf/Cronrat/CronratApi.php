@@ -214,7 +214,7 @@ Class CronratApi extends CronratBase{
      * @return boolean
      */
 
-    public static function check_set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon)
+    public static function check_set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon, $toutc)
     {
         //this function sets rat key ast ttl and rat spec key at ttl of 48 hr.
         //this also sets index key as index::$ratkey = 1 of ttl of 48 hr
@@ -271,7 +271,7 @@ Class CronratApi extends CronratBase{
         }
 
         //set url
-        return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon);
+        return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon, $toutc);
     }
 
     public static function get_expected_rats()

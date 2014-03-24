@@ -50,7 +50,7 @@ class CronratUrl extends BaseController {
         }
         if(empty($toutc)) //trylowercase
         {
-            $toutc=0;
+            $toutc='0'';
         }
 
         try{
