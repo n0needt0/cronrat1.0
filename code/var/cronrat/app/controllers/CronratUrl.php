@@ -15,6 +15,7 @@ class CronratUrl extends BaseController {
         {
             $nextcheck=Input::Get('nextcheck',false);
         }
+
         if(empty($nextcheck)) //trylowercase
         {
             $nextcheck=1440; //default 1440 min 24hr
