@@ -230,6 +230,7 @@ Class CronratApi extends CronratBase{
                 throw new \Exception("Invalid account");
                 return false;
             }
+            $acct = self::get_account($ratkey);
         }
 
         if($emailto && $emailto != $acct['email'] && !$acct['emailto'])
