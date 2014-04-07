@@ -55,18 +55,20 @@ Super Awesome Nice &copy; 2014 cronrat.com
          this is good for obs that do not run on say weekeds. Default is to run everyday.
     <b>TOUTC</b> (optional) - Offset in seconds between your job's time zone and UTC, example for PST offset is 25200sec
 
+    <b>IMPORTANT</b> please note all curl urls are enclosed in "quotes" to preserve & ad other special characters.
+
     example urls:
-    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww
+    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww"
     <i>will alert if job BackupMySQL not run in next 24 hours </i>
 
-    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net
+    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net"
     <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net (Note Url encoded @ is %40)</i>
 
-    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php
+    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php"
     <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
     and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
 
-    http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php&ACTIVEON=MTWTF00&TOUTC=25200
+    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php&ACTIVEON=MTWTF00&TOUTC=25200"
     <i>Active only on weekdays and will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
     and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
 
@@ -75,12 +77,12 @@ Super Awesome Nice &copy; 2014 cronrat.com
 
 From Crontab
 
-0 0 * * * /usr/bin/backintime  --backup-job  && curl http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww &> /dev/null
+0 0 * * * /usr/bin/backintime  --backup-job  && curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww"
 
 Or you can used from inside of your scripts, just call Cronrat url
 
 //Bash Example
-curl -l http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww &> /dev/null
+curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww"
 
 PHP example
 // create a new cURL resource
