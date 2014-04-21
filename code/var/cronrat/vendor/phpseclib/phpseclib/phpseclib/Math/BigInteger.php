@@ -175,7 +175,6 @@ define('MATH_BIGINTEGER_KARATSUBA_CUTOFF', 25);
  *
  * @package Math_BigInteger
  * @author  Jim Wigginton <terrafrost@php.net>
- * @version 1.0.0RC4
  * @access  public
  */
 class Math_BigInteger
@@ -242,13 +241,13 @@ class Math_BigInteger
      *
      * Here's an example:
      * <code>
-     * &lt;?php
+     * <?php
      *    include('Math/BigInteger.php');
      *
      *    $a = new Math_BigInteger('0x32', 16); // 50 in base-16
      *
      *    echo $a->toString(); // outputs 50
-     * ?&gt;
+     * ?>
      * </code>
      *
      * @param optional $x base-10 number or base-$base number if $base set.
@@ -274,7 +273,7 @@ class Math_BigInteger
         if (function_exists('openssl_public_encrypt') && !defined('MATH_BIGINTEGER_OPENSSL_DISABLE') && !defined('MATH_BIGINTEGER_OPENSSL_ENABLED')) {
             // some versions of XAMPP have mismatched versions of OpenSSL which causes it not to work
             ob_start();
-            phpinfo();
+            @phpinfo();
             $content = ob_get_contents();
             ob_end_clean();
 
@@ -1722,6 +1721,11 @@ class Math_BigInteger
 
         return $this->_normalize($this->_slidingWindow($e, $n, MATH_BIGINTEGER_BARRETT));
 
+        // the following code, although not callable, can be run independently of the above code
+        // although the above code performed better in my benchmarks the following could might
+        // perform better under different circumstances. in lieu of deleting it it's just been
+        // made uncallable
+
         // is the modulo odd?
         if ( $n->value[0] & 1 ) {
             return $this->_normalize($this->_slidingWindow($e, $n, MATH_BIGINTEGER_MONTGOMERY));
@@ -2294,6 +2298,11 @@ class Math_BigInteger
     {
         $temp = $this->_multiply($x, false, $y, false);
         return $this->_montgomery($temp[MATH_BIGINTEGER_VALUE], $m);
+
+        // the following code, although not callable, can be run independently of the above code
+        // although the above code performed better in my benchmarks the following could might
+        // perform better under different circumstances. in lieu of deleting it it's just been
+        // made uncallable
 
         static $cache = array(
             MATH_BIGINTEGER_VARIABLE => array(),
@@ -3283,7 +3292,7 @@ class Math_BigInteger
      * Checks a numer to see if it's prime
      *
      * Assuming the $t parameter is not set, this function has an error rate of 2**-80.  The main motivation for the
-     * $t parameter is distributability.  Math_BigInteger::randomPrime() can be distributed accross multiple pageloads
+     * $t parameter is distributability.  Math_BigInteger::randomPrime() can be distributed across multiple pageloads
      * on a website instead of just one.
      *
      * @param optional Integer $t

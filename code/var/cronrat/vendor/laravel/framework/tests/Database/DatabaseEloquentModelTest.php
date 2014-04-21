@@ -29,6 +29,15 @@ class DatabaseEloquentModelTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testDirtyAttributes()
+	{
+		$model = new EloquentModelStub(array('foo' => '1'));
+		$model->syncOriginal();
+		$model->foo = 1;
+		$this->assertFalse($model->isDirty('foo'));
+	}
+
+
 	public function testCalculatedAttributes()
 	{
 		$model = new EloquentModelStub;
@@ -51,6 +60,26 @@ class DatabaseEloquentModelTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('taylor', $instance->name);
 	}
 
+
+	public function testHydrateCreatesCollectionOfModels()
+	{
+		$data = array(array('name' => 'Taylor'), array('name' => 'Otwell'));
+		$collection = EloquentModelStub::hydrate($data);
+
+		$this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $collection);
+		$this->assertEquals(2, count($collection));
+		$this->assertInstanceOf('EloquentModelStub', $collection[0]);
+		$this->assertInstanceOf('EloquentModelStub', $collection[1]);
+		$this->assertEquals('Taylor', $collection[0]->name);
+		$this->assertEquals('Otwell', $collection[1]->name);
+	}
+
+
+	public function testHydrateRawMakesRawQuery()
+	{
+		$collection = EloquentModelHydrateRawStub::hydrateRaw('SELECT ?', array('foo'));
+		$this->assertEquals('hydrated', $collection);
+	}
 
 	public function testCreateMethodSavesNewModel()
 	{
@@ -658,15 +687,12 @@ class DatabaseEloquentModelTest extends PHPUnit_Framework_TestCase {
 
 	public function testMorphToCreatesProperRelation()
 	{
-		$model = m::mock('Illuminate\Database\Eloquent\Model[belongsTo]');
-		$model->foo_type = 'FooClass';
-		$model->shouldReceive('belongsTo')->with('FooClass', 'foo_id');
-		$relation = $model->morphTo('foo');
-
-		$model = m::mock('EloquentModelStub[belongsTo]');
-		$model->morph_to_stub_type = 'FooClass';
-		$model->shouldReceive('belongsTo')->with('FooClass', 'morph_to_stub_id');
+		$model = new EloquentModelStub;
+		$this->addMockConnection($model);
 		$relation = $model->morphToStub();
+		$this->assertEquals('morph_to_stub_id', $relation->getForeignKey());
+		$this->assertTrue($relation->getParent() === $model);
+		$this->assertTrue($relation->getQuery()->getModel() instanceof EloquentModelSaveStub);
 	}
 
 
@@ -782,6 +808,7 @@ class EloquentTestObserverStub {
 class EloquentModelStub extends Illuminate\Database\Eloquent\Model {
 	protected $table = 'stub';
 	protected $guarded = array();
+	protected $morph_to_stub_type = 'EloquentModelSaveStub';
 	public function getListItemsAttribute($value)
 	{
 		return json_decode($value, true);
@@ -870,6 +897,16 @@ class EloquentModelDestroyStub extends Illuminate\Database\Eloquent\Model {
 		$mock->shouldReceive('whereIn')->once()->with('id', array(1, 2, 3))->andReturn($mock);
 		$mock->shouldReceive('get')->once()->andReturn(array($model = m::mock('StdClass')));
 		$model->shouldReceive('delete')->once();
+		return $mock;
+	}
+}
+
+class EloquentModelHydrateRawStub extends Illuminate\Database\Eloquent\Model {
+	public static function hydrate(array $items, $connection = null) { return 'hydrated'; }
+	public function getConnection()
+	{
+		$mock = m::mock('Illuminate\Database\Connection');
+		$mock->shouldReceive('select')->once()->with('SELECT ?', array('foo'))->andReturn(array());
 		return $mock;
 	}
 }

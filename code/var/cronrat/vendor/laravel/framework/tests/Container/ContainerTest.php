@@ -38,6 +38,14 @@ class ContainerContainerTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testSlashesAreHandled()
+	{
+		$container = new Container;
+		$container->bind('\Foo', function() { return 'hello'; });
+		$this->assertEquals('hello', $container->make('Foo'));
+	}
+
+
 	public function testParametersCanOverrideDependencies()
 	{
 		$container = new Container;
@@ -272,7 +280,6 @@ class ContainerContainerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($_SERVER['__test.rebind']);
 	}
 
-
 	public function testPassingSomePrimitiveParameters()
 	{
 		$container = new Container;
@@ -288,6 +295,14 @@ class ContainerContainerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('taylor', $value->first);
 		$this->assertEquals('otwell', $value->last);
 		$this->assertInstanceOf('ContainerConcreteStub', $value->stub);
+	}
+
+	public function testCreatingBoundConcreteClassPassesParameters() {
+		$container = new Container;
+		$container->bind('TestAbstractClass', 'ContainerConstructorParameterLoggingStub');
+		$parameters = array('First', 'Second');
+		$instance = $container->make('TestAbstractClass', $parameters);
+		$this->assertEquals($parameters, $instance->receivedParameters);
 	}
 
 }
@@ -332,3 +347,13 @@ class ContainerMixedPrimitiveStub {
 		$this->first = $first;
 	}
 }
+
+class ContainerConstructorParameterLoggingStub {
+	public $receivedParameters;
+
+	public function __construct($first, $second)
+	{
+		$this->receivedParameters = func_get_args();
+	}
+}
+

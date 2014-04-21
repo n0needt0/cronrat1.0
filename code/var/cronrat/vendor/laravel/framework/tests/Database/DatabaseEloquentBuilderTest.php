@@ -23,6 +23,37 @@ class DatabaseEloquentBuilderTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('baz', $result);
 	}
 
+	public function testFindOrNewMethodModelFound()
+	{
+		$model = $this->getMockModel();
+		$model->shouldReceive('findOrNew')->once()->andReturn('baz');
+
+		$builder = m::mock('Illuminate\Database\Eloquent\Builder[first]', array($this->getMockQueryBuilder()));
+		$builder->setModel($model);
+		$builder->getQuery()->shouldReceive('where')->once()->with('foo', '=', 'bar');
+		$builder->shouldReceive('first')->with(array('column'))->andReturn('baz');
+
+		$expected = $model->findOrNew('bar', array('column'));
+		$result = $builder->find('bar', array('column'));
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testFindOrNewMethodModelNotFound()
+	{
+		$model = $this->getMockModel();
+		$model->shouldReceive('findOrNew')->once()->andReturn(m::mock('Illuminate\Database\Eloquent\Model'));
+
+		$builder = m::mock('Illuminate\Database\Eloquent\Builder[first]', array($this->getMockQueryBuilder()));
+		$builder->setModel($model);
+		$builder->getQuery()->shouldReceive('where')->once()->with('foo', '=', 'bar');
+		$builder->shouldReceive('first')->with(array('column'))->andReturn(null);
+
+		$result = $model->findOrNew('bar', array('column'));
+		$findResult = $builder->find('bar', array('column'));
+		$this->assertNull($findResult);
+		$this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $result);
+	}
+
 	/**
 	 * @expectedException Illuminate\Database\Eloquent\ModelNotFoundException
 	 */
@@ -262,7 +293,7 @@ class DatabaseEloquentBuilderTest extends PHPUnit_Framework_TestCase {
 		$relation = m::mock('stdClass');
 		$relation->shouldReceive('addEagerConstraints')->once()->with(array('models'));
 		$relation->shouldReceive('initRelation')->once()->with(array('models'), 'orders')->andReturn(array('models'));
-		$relation->shouldReceive('get')->once()->andReturn(array('results'));
+		$relation->shouldReceive('getEager')->once()->andReturn(array('results'));
 		$relation->shouldReceive('match')->once()->with(array('models'), array('results'), 'orders')->andReturn(array('models.matched'));
 		$builder->shouldReceive('getRelation')->once()->with('orders')->andReturn($relation);
 		$results = $builder->eagerLoadRelations(array('models'));
@@ -284,6 +315,27 @@ class DatabaseEloquentBuilderTest extends PHPUnit_Framework_TestCase {
 		$builder->setEagerLoads(array('orders' => null, 'orders.lines' => null, 'orders.lines.details' => null));
 
 		$relation = $builder->getRelation('orders');
+	}
+
+
+	public function testGetRelationProperlySetsNestedRelationshipsWithSimilarNames()
+	{
+		$builder = $this->getBuilder();
+		$builder->setModel($this->getMockModel());
+		$builder->getModel()->shouldReceive('orders')->once()->andReturn($relation = m::mock('stdClass'));
+		$builder->getModel()->shouldReceive('ordersGroups')->once()->andReturn($groupsRelation = m::mock('stdClass'));
+
+		$relationQuery = m::mock('stdClass');
+		$relation->shouldReceive('getQuery')->andReturn($relationQuery);
+
+		$groupRelationQuery = m::mock('stdClass');
+		$groupsRelation->shouldReceive('getQuery')->andReturn($groupRelationQuery);
+		$groupRelationQuery->shouldReceive('with')->once()->with(array('lines' => null, 'lines.details' => null));
+
+		$builder->setEagerLoads(array('orders' => null, 'ordersGroups' => null, 'ordersGroups.lines' => null, 'ordersGroups.lines.details' => null));
+
+		$relation = $builder->getRelation('orders');
+		$relation = $builder->getRelation('ordersGroups');
 	}
 
 
@@ -347,7 +399,7 @@ class DatabaseEloquentBuilderTest extends PHPUnit_Framework_TestCase {
 	{
 		$builder = $this->getBuilder();
 		$builder->getQuery()->shouldReceive('from');
-		$builder->getQuery()->shouldReceive('where')->once()->with('foo', 'bar', null, 'and');
+		$builder->getQuery()->shouldReceive('where')->once()->with('foo', 'bar');
 		$builder->setModel($model = new EloquentBuilderTestScopeStub);
 		$result = $builder->approved();
 
