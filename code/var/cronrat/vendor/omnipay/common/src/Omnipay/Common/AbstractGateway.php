@@ -63,6 +63,11 @@ abstract class AbstractGateway implements GatewayInterface
         return $this;
     }
 
+    public function getDefaultParameters()
+    {
+        return array();
+    }
+
     public function getParameters()
     {
         return $this->parameters->all();
@@ -128,6 +133,16 @@ abstract class AbstractGateway implements GatewayInterface
     public function supportsCapture()
     {
         return method_exists($this, 'capture');
+    }
+
+    /**
+     * Supports Purchase
+     *
+     * @return boolean True if this gateway supports the purchase() method
+     */
+    public function supportsPurchase()
+    {
+        return method_exists($this, 'purchase');
     }
 
     /**

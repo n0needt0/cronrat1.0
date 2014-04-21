@@ -1492,55 +1492,6 @@
         "notification-url": "https://packagist.org/downloads/"
     },
     {
-        "name": "classpreloader/classpreloader",
-        "version": "1.0.1",
-        "version_normalized": "1.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/mtdowling/ClassPreloader.git",
-            "reference": "1a50f7945b725ff2c60f234e51407d1d6e7c77c5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/mtdowling/ClassPreloader/zipball/1a50f7945b725ff2c60f234e51407d1d6e7c77c5",
-            "reference": "1a50f7945b725ff2c60f234e51407d1d6e7c77c5",
-            "shasum": ""
-        },
-        "require": {
-            "nikic/php-parser": "*",
-            "php": ">=5.3.3",
-            "symfony/console": ">2.0",
-            "symfony/filesystem": ">2.0",
-            "symfony/finder": ">2.0"
-        },
-        "time": "2013-06-24 22:58:34",
-        "bin": [
-            "classpreloader.php"
-        ],
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "ClassPreloader": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "description": "Helps class loading performance by generating a single PHP file containing all of the autoloaded files for a specific use case",
-        "keywords": [
-            "autoload",
-            "class",
-            "preload"
-        ]
-    },
-    {
         "name": "laravel/framework",
         "version": "4.1.x-dev",
         "version_normalized": "4.1.9999999.9999999-dev",
@@ -1568,7 +1519,7 @@
             "phpseclib/phpseclib": "0.3.*",
             "predis/predis": "0.8.*",
             "stack/builder": "1.0.*",
-            "swiftmailer/swiftmailer": "5.0.*",
+            "swiftmailer/swiftmailer": "~5.0",
             "symfony/browser-kit": "2.4.*",
             "symfony/console": "2.4.*",
             "symfony/css-selector": "2.4.*",
@@ -1579,6 +1530,7 @@
             "symfony/http-kernel": "2.4.*",
             "symfony/process": "2.4.*",
             "symfony/routing": "2.4.*",
+            "symfony/security": "2.4.*",
             "symfony/translation": "2.4.*"
         },
         "replace": {
@@ -1969,17 +1921,17 @@
     },
     {
         "name": "omnipay/common",
-        "version": "v2.1.0",
-        "version_normalized": "2.1.0.0",
+        "version": "v2.2.0",
+        "version_normalized": "2.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/omnipay/common.git",
-            "reference": "b1630efda8f2229fe8190c22b47e0ae0ecd6fe1f"
+            "reference": "3a04a1c86e1decd2d5fdf946fb732bea35c7a588"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/omnipay/common/zipball/b1630efda8f2229fe8190c22b47e0ae0ecd6fe1f",
-            "reference": "b1630efda8f2229fe8190c22b47e0ae0ecd6fe1f",
+            "url": "https://api.github.com/repos/omnipay/common/zipball/3a04a1c86e1decd2d5fdf946fb732bea35c7a588",
+            "reference": "3a04a1c86e1decd2d5fdf946fb732bea35c7a588",
             "shasum": ""
         },
         "require": {
@@ -1990,7 +1942,7 @@
         "require-dev": {
             "omnipay/tests": "~2.0"
         },
-        "time": "2013-12-08 07:04:13",
+        "time": "2014-04-12 02:33:52",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2068,17 +2020,17 @@
     },
     {
         "name": "omnipay/paypal",
-        "version": "v2.1.0",
-        "version_normalized": "2.1.0.0",
+        "version": "v2.2.0",
+        "version_normalized": "2.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/omnipay/paypal.git",
-            "reference": "f2d5aaa9a4cc3bf73c701aae4b17e66ebccfecf5"
+            "reference": "a08b9f06ee014e31102008a71d85a4272dace724"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/omnipay/paypal/zipball/f2d5aaa9a4cc3bf73c701aae4b17e66ebccfecf5",
-            "reference": "f2d5aaa9a4cc3bf73c701aae4b17e66ebccfecf5",
+            "url": "https://api.github.com/repos/omnipay/paypal/zipball/a08b9f06ee014e31102008a71d85a4272dace724",
+            "reference": "a08b9f06ee014e31102008a71d85a4272dace724",
             "shasum": ""
         },
         "require": {
@@ -2087,7 +2039,7 @@
         "require-dev": {
             "omnipay/tests": "~2.0"
         },
-        "time": "2014-02-17 03:16:12",
+        "time": "2014-04-05 16:45:15",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2096,7 +2048,7 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
+            "psr-4": {
                 "Omnipay\\PayPal\\": "src/"
             }
         },
@@ -2124,6 +2076,55 @@
             "payment",
             "paypal",
             "purchase"
+        ]
+    },
+    {
+        "name": "classpreloader/classpreloader",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mtdowling/ClassPreloader.git",
+            "reference": "2c9f3bcbab329570c57339895bd11b5dd3b00877"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mtdowling/ClassPreloader/zipball/2c9f3bcbab329570c57339895bd11b5dd3b00877",
+            "reference": "2c9f3bcbab329570c57339895bd11b5dd3b00877",
+            "shasum": ""
+        },
+        "require": {
+            "nikic/php-parser": "~0.9",
+            "php": ">=5.3.3",
+            "symfony/console": "~2.1",
+            "symfony/filesystem": "~2.1",
+            "symfony/finder": "~2.1"
+        },
+        "time": "2014-03-12 00:05:31",
+        "bin": [
+            "classpreloader.php"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "ClassPreloader": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Helps class loading performance by generating a single PHP file containing all of the autoloaded files for a specific use case",
+        "keywords": [
+            "autoload",
+            "class",
+            "preload"
         ]
     }
 ]

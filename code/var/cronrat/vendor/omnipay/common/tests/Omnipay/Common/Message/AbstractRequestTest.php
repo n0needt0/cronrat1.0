@@ -11,14 +11,32 @@ class AbstractRequestTest extends TestCase
 {
     public function setUp()
     {
-        $this->request = m::mock('\Omnipay\Common\Message\AbstractRequest[getData,sendData]');
+        $this->request = m::mock('\Omnipay\Common\Message\AbstractRequest')->makePartial();
         $this->request->initialize();
+    }
+
+    public function testConstruct()
+    {
+        $this->request = new AbstractRequestTest_MockAbstractRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->assertSame(array(), $this->request->getParameters());
     }
 
     public function testInitializeWithParams()
     {
         $this->assertSame($this->request, $this->request->initialize(array('amount' => '1.23')));
         $this->assertSame('1.23', $this->request->getAmount());
+    }
+
+    /**
+     * @expectedException \Omnipay\Common\Exception\RuntimeException
+     * @expectedExceptionMessage Request cannot be modified after it has been sent!
+     */
+    public function testInitializeAfterRequestSent()
+    {
+        $this->request = new AbstractRequestTest_MockAbstractRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->request->send();
+
+        $this->request->initialize();
     }
 
     public function testCard()
@@ -217,6 +235,18 @@ class AbstractRequestTest extends TestCase
         $this->assertSame('https://www.example.com/notify', $this->request->getNotifyUrl());
     }
 
+    public function testIssuer()
+    {
+        $this->assertSame($this->request, $this->request->setIssuer('some-bank'));
+        $this->assertSame('some-bank', $this->request->getIssuer());
+    }
+
+    public function testPaymentMethod()
+    {
+        $this->assertSame($this->request, $this->request->setPaymentMethod('ideal'));
+        $this->assertSame('ideal', $this->request->getPaymentMethod());
+    }
+
     public function testInitializedParametersAreSet()
     {
         $params = array('testMode' => 'success');
@@ -236,6 +266,18 @@ class AbstractRequestTest extends TestCase
             'token' => 'asdf',
         );
         $this->assertEquals($expected, $this->request->getParameters());
+    }
+
+    /**
+     * @expectedException \Omnipay\Common\Exception\RuntimeException
+     * @expectedExceptionMessage Request cannot be modified after it has been sent!
+     */
+    public function testSetParameterAfterRequestSent()
+    {
+        $this->request = new AbstractRequestTest_MockAbstractRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->request->send();
+
+        $this->request->setCurrency('PHP');
     }
 
     public function testCanValidateExistingParameters()
@@ -274,9 +316,30 @@ class AbstractRequestTest extends TestCase
 
     /**
      * @expectedException \Omnipay\Common\Exception\RuntimeException
+     * @expectedExceptionMessage You must call send() before accessing the Response!
      */
-    public function testMustSendRequestBeforeGettingResponse()
+    public function testGetResponseBeforeRequestSent()
     {
+        $this->request = new AbstractRequestTest_MockAbstractRequest($this->getHttpClient(), $this->getHttpRequest());
         $this->request->getResponse();
+    }
+
+    public function testGetResponseAfterRequestSent()
+    {
+        $this->request = new AbstractRequestTest_MockAbstractRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->request->send();
+
+        $response = $this->request->getResponse();
+        $this->assertInstanceOf('\Omnipay\Common\Message\ResponseInterface', $response);
+    }
+}
+
+class AbstractRequestTest_MockAbstractRequest extends AbstractRequest
+{
+    public function getData() {}
+
+    public function sendData($data)
+    {
+        $this->response = m::mock('\Omnipay\Common\Message\AbstractResponse');
     }
 }

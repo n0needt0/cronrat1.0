@@ -55,7 +55,7 @@ Super Awesome Nice &copy; 2014 cronrat.com
          this is good for obs that do not run on say weekeds. Default is to run everyday.
     <b>TOUTC</b> (optional) - Offset in seconds between your job's time zone and UTC, example for PST offset is 25200sec
 
-    <b>IMPORTANT</b> please note all curl urls are enclosed in "quotes" to preserve & ad other special characters.
+    <b>IMPORTANT</b> please note all curl urls are enclosed in "quotes" to preserve special characters.
 
     example urls:
     curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww"

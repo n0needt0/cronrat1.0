@@ -3,7 +3,8 @@
 		"laravel/framework": "4.1.*",
 		"cartalyst/sentry": "2.0.*",
 		"lj4/redbean-laravel4": "dev-master",
-		"omnipay/paypal": "~2.0"
+		"omnipay/paypal": "~2.0",
+		"mtdowling/cron-expression": "1.0.*"
 		
 	},
 	"autoload": {
