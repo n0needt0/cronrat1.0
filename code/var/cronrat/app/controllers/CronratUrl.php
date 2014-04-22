@@ -1,5 +1,6 @@
 <?php
 use \Lasdorf\CronratApi\CronratApi as Rat;
+use \Lasdorf\CronratApi\Crontab as Crontab;
 
 class CronratUrl extends BaseController {
 
@@ -8,19 +9,49 @@ class CronratUrl extends BaseController {
     public function getCr($ratkey=false, $ratname=false)
     {
 
-        //see if ratkey is valid 404 otherwise
-
-        $nextcheck=Input::Get('NEXTCHECK',false);
-        if(empty($nextcheck)) //trylowercase
+        if(Input::has('debug'))
         {
-            $nextcheck=Input::Get('nextcheck',false);
+            $debug = 1;
+        }
+        elseif(Input::has('DEBUG'))
+        {
+            $debug = 1;
+        }
+        else
+        {
+            $debug=0;
         }
 
-        if(empty($nextcheck)) //trylowercase
+        if(Input::has('crontab'))
         {
-            $nextcheck=1440; //default 1440 min 24hr
+            $crontab = Input::Get('crontab');
+        }
+        elseif(Input::has('CRONTAB'))
+        {
+            $crontab = Input::Get('CRONTAB');
+        }
+        else
+        {
+            $crontab = Config::Get('cronrat.defaults.crontab');
         }
 
+        if(Input::has('allow'))
+        {
+            $allow = Input::Get('allow');
+        }
+        elseif(Input::has('ALLOW'))
+        {
+            $allow = Input::Get('ALLOW');
+        }
+        else
+        {
+            $allow = Config::Get('cronrat.defaults.allow');
+        }
+
+        if(intval($allow) < 300)
+        {
+            $allow = Config::Get('cronrat.defaults.min_allow');
+        }
 
         $emailto=Input::Get('EMAILTO',false);
         if(empty($emailto)) //trylowercase
@@ -34,16 +65,6 @@ class CronratUrl extends BaseController {
             $urlto=Input::Get('urlto',false);
         }
 
-        $activeon=Input::Get('ACTIVEON',false);
-        if(empty($activeon)) //trylowercase
-        {
-            $activeon=Input::Get('activeon',false);
-        }
-        if(empty($activeon)) //trylowercase
-        {
-            $activeon='MTWTFSS';
-        }
-
         $toutc=Input::Get('TOUTC',false);
         if(empty($toutc)) //trylowercase
         {
@@ -54,61 +75,74 @@ class CronratUrl extends BaseController {
             $toutc='0';
         }
 
-        $inactive = strpos($activeon,'0'); //see if any day s inactive
-        $daystoskip = 0;
+        $params = array('crontab'=>$crontab, 'allow'=>$allow, 'emailto'=>$emailto, 'urlto'=>$urlto, 'toutc'=>$toutc);
 
-        if($inactive !== false)
+        if($toutc == 0)
         {
-            //now lets see when this needs to run next. it be greater of $ttl (nextcheck) or next day to run on via active ON
+            date_default_timezone_set('UTC');
+        }
+        else
+        {
+            $tz = timezone_name_from_abbr(null, $toutc * 3600, true);
+            if($tz === false) $tz = timezone_name_from_abbr(null, $toutc * 3600, false);
+            date_default_timezone_set($tz);
+        }
 
-            $weekday = date('w',time() + intval($toutc));
+        //lets evaluate crontab
+        $cron = Cron\CronExpression::factory($crontab);
 
-           //lets see if position
-            $pos = intval($weekday);
+        $scheduled_lastrun = $cron->getPreviousRunDate()->getTimeStamp();
+        $now = time();
+        $scheduled_nextrun = $cron->getNextRunDate()->getTimeStamp();
 
-            if(0 == $pos)
-            {
-                $pos=7; //sunday is 7, rest of wold has monday based weeks
-            }
+        if($debug)
+        {
+            echo "RATKEY: $ratkey</br>";
+            echo "RATNAME: $ratname</br>";
+            echo "CRONTAB: $crontab</br>";
+            echo "ALLOW: $allow</br>";
+            echo "URLTO: $urlto</br>";
+            echo "EMAILTO: $emailto</br>";
+            echo "TOUTC: $toutc</br>";
+        }
 
-            //now see if next day is OFF
-            if('0' == substr($activeon, $pos-1, 1))
-            {
-                $daystoskip = 1;
 
-                while(true)
-                {
-                    //look for next working day
+        if($debug)
+        {
+            echo "LOCAL TIME " . date_default_timezone_get() . "</br>";
+            echo "scheduled_lastrun: " . date('Y-m-d H:i:s', $scheduled_lastrun);
+            echo "</br>";
+            echo "now: " . date('Y-m-d H:i:s', $now);
+            echo "</br>";
+            echo "scheduled_nextrun: " . date('Y-m-d H:i:s', $scheduled_nextrun);
+            echo "</br>";
+        }
+        //now convert this stamps to UTC time
+        date_default_timezone_set('UTC');
+        $scheduled_lastrun = $cron->getPreviousRunDate()->getTimeStamp();
+        $now = time();
+        $scheduled_nextrun = $cron->getNextRunDate()->getTimeStamp();
 
-                    $pos++;
-
-                    if(7 == $pos)
-                    {
-                        $pos=1; //reset to beginnig of the week
-                    }
-
-                    if('0' == substr($activeon, $pos-1, 1))
-                   {
-                      $daystoskip++;
-                   }
-                     else
-                   {
-                      break;
-                   }
-                }
-            }
-            $nextcheck = $nextcheck + (1440 * $daystoskip);
+        if($debug)
+        {
+            echo "</br>UTC TIME </br>";
+            echo "scheduled_lastrun: " . date('Y-m-d H:i:s', $scheduled_lastrun);
+            echo "</br>";
+            echo "now: " . date('Y-m-d H:i:s', $now);
+            echo "</br>";
+            echo "scheduled_nextrun: " . date('Y-m-d H:i:s', $scheduled_nextrun);
+            echo "</br>";
         }
 
         try{
-            $res = Rat::check_set_rat($ratkey, $ratname, $nextcheck, $emailto, $urlto, $activeon,$toutc);
+            $res = Rat::check_set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $scheduled_nextrun + $allow);
             if($res)
             {
                 echo "OK";
                 die;
             }
         }
-            catch(Exception $e)
+        catch(Exception $e)
         {
             echo $e->getMessage();
             die;

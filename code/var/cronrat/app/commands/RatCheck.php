@@ -68,131 +68,52 @@ class RatCheck extends Command {
 
             foreach($expected as $ek => $ev)
             {
-                    $docheck = true;
+                $rp = explode('::', $ek);
+                if(count($rp) != 3)
+                {
+                    $this->error("Invalid rat key $ek");
+                    continue;
+                }
 
-                    //check if should even test on this day
-                    if(!empty($ev['activeon']))
+                $livekey = str_replace('::specs::', '::status::', $ek);
+                $deadratkey = str_replace('::specs::', '::dead::', $ek);
+
+                $this->debug("livekey: $livekey");
+                $this->debug("deadratkey: $deadratkey");
+
+                if(Rat::lookup($livekey))
+                {
+                    //rat is live
+                    if(Rat::lookup($deadratkey))
                     {
+                        Rat::remove_dead_rat($deadratkey);
+                        $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'nextrun'=>$ev['nextrun'], 'url'=>$ev['url'], 'crontab'=>$ev['crontab'], 'allow'=>$ev['allow']);
+                        $this->notify_up($exp);
+                        $this->debug('Alive again ' . print_r($exp, true));
+                    }
+                }
+                else
+                {
+                    //rat died
+                    $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'nextrun'=>$ev['nextrun'], 'url'=>$ev['url'], 'crontab'=>$ev['crontab'], 'allow'=>$ev['allow']);
 
-                        //remember server runs on UTC time,
-                        //so we adjust by toutc
+                    if(!$deadrat = Rat::lookup($deadratkey))
+                    {
+                        //first time rat dies, mark it and notify
+                        Rat::mark_dead($deadratkey, array('cnt'=>1, 'ts'=>time()));
 
-                        if(!empty($ev['toutc']))
+                        $this->notify_down($exp);
+                        $this->debug('Expired ' . print_r($exp, true));
+                    }
+                    else
+                    {
+                        if(!empty($deadrat['cnt']) && $deadrat['cnt'] < 3)
                         {
-                            $this->info('offset utc by ' . $ev['toutc'] . ' sec');
-
-                            $weekday = date('w',time() + intval($ev['toutc']));
-                        }
-                         else
-                         {
-                             $weekday = date('w',time());
-                         }
-
-                        switch (intval($weekday))
-                        {
-                            case 0: //SUNDAY
-                                if(empty(substr($ev['activeon'],6,1)))
-                                {
-                                    $this->info("Skip on Sunday");
-                                    $docheck = false;
-                                }
-                                break;
-                            case 1: //MONDAY
-
-                                if(empty(substr($ev['activeon'],0,1)))
-                                {
-                                    $this->info("Skip on Monday");
-                                    $docheck = false;
-                                }
-                                break;
-                            case 2: //TuESDAY
-                                if(empty(substr($ev['activeon'],1,1)))
-                                {
-                                    $this->info("Skip on Tuesday");
-                                    $docheck = false;
-                                }
-                                break;
-                            case 3: //WED
-                                if(empty(substr($ev['activeon'],2,1)))
-                                {
-                                    $this->info("Skip on Wed");
-                                    $docheck = false;
-                                }
-                                break;
-                            case 4: //THUR
-                                if(empty(substr($ev['activeon'],3,1)))
-                                {
-                                    $this->info("Skip on Thur");
-                                    $docheck = false;
-                                }
-                                break;
-                            case 5: //FRI
-                                if(empty(substr($ev['activeon'],4,1)))
-                                {
-                                    $this->info("Skip on Fri");
-                                    $docheck = false;
-                                }
-                                break;
-                            case 6: //SAT
-                                if(empty(substr($ev['activeon'],5,1)))
-                                {
-                                    $this->info("Skip on Saturday");
-                                    $docheck = false;
-                                }
-                                break;
+                            Rat::mark_dead($deadratkey, array('cnt'=>($deadrat['cnt']+1), 'ts'=>time()));
+                            $this->notify_down($exp);
+                            $this->debug('Expired ' . print_r($exp, true));
                         }
                     }
-
-                if($docheck)
-                {
-                        $rp = explode('::', $ek);
-                        if(count($rp) != 3)
-                        {
-                            $this->error("Invalid rat key $ek");
-                            continue;
-                        }
-
-                        $livekey = str_replace('::specs::', '::status::', $ek);
-                        $deadratkey = str_replace('::specs::', '::dead::', $ek);
-
-                        $this->debug("livekey: $livekey");
-                        $this->debug("deadratkey: $deadratkey");
-
-                        if(Rat::lookup($livekey))
-                        {
-                            //rat is live
-                            if(Rat::lookup($deadratkey))
-                            {
-                                Rat::remove_dead_rat($deadratkey);
-                                $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
-                                $this->notify_up($exp);
-                                $this->debug('Alive again ' . print_r($exp, true));
-                            }
-                        }
-                          else
-                        {
-                            //rat died
-                            $exp = array('cronrat_name'=>$rp[2], 'cronrat_code'=>$rp['0'], 'email'=>$ev['email'], 'ttl'=>$ev['ttl'], 'url'=>$ev['url']);
-
-                            if(!$deadrat = Rat::lookup($deadratkey))
-                            {
-                                //first time rat dies, mark it and notify
-                                Rat::mark_dead($deadratkey, array('cnt'=>1, 'ts'=>time()));
-
-                                $this->notify_down($exp);
-                                $this->debug('Expired ' . print_r($exp, true));
-                            }
-                             else
-                            {
-                                if(!empty($deadrat['cnt']) && $deadrat['cnt'] < 3)
-                                {
-                                    Rat::mark_dead($deadratkey, array('cnt'=>($deadrat['cnt']+1), 'ts'=>time()));
-                                    $this->notify_down($exp);
-                                    $this->debug('Expired ' . print_r($exp, true));
-                                }
-                            }
-                        }
-
                 }
             }
         }
@@ -206,24 +127,24 @@ class RatCheck extends Command {
     {
         $data['random'] = $this->get_random_text();
 
-         Mail::send('emails.cronrat.down', $data, function($message) use ($data)
-         {
+        Mail::send('emails.cronrat.down', $data, function($message) use ($data)
+        {
             $message->to($data['email'])->subject($data['cronrat_name'] . ' Cronrat is down!');
-         });
+        });
     }
 
     private function notify_up($data)
     {
-         $data['random'] = $this->get_random_text();
+        $data['random'] = $this->get_random_text();
 
-         Mail::send('emails.cronrat.up', $data, function($message) use ($data)
-         {
+        Mail::send('emails.cronrat.up', $data, function($message) use ($data)
+        {
             $message->to($data['email'])->subject($data['cronrat_name'] . ' Recovered!');
-         });
+        });
     }
 
-  function get_random_text()
-  {
+    function get_random_text()
+    {
         $file = __DIR__ . '/misc/random.txt';
         $returnlines = 20;
         $i=0;
@@ -237,14 +158,14 @@ class RatCheck extends Command {
         {
             while (!feof($handle) && $i<=$returnlines)
             {
-                 $buffer .= fgets($handle, 4096);
-                 $i++;
+                $buffer .= fgets($handle, 4096);
+                $i++;
             }
 
             fclose($handle);
         }
 
         return "\n</br>\n</br>\n</br>*************RANDOM TEXT TO ESCAPE SPAM FILTER****************************\n</br>\n</br>\n</br>" . $buffer;
-  }
+    }
 
 }

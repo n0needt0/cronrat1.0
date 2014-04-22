@@ -29,7 +29,7 @@
  * @copyright: Copyright (C) 2009, Jan Konieczny
  */
 class Crontab {
-   /**
+    /**
      *  Finds next execution time(stamp) parsin crontab syntax,
      *  after given starting timestamp (or current time if ommited)
      *
@@ -61,21 +61,21 @@ class Crontab {
         $start  = empty($_after_timestamp)?time():$_after_timestamp;
 
         $date   = array(    'minutes'   =>self::_parseCronNumbers($cron[0],0,59),
-                            'hours'     =>self::_parseCronNumbers($cron[1],0,23),
-                            'dom'       =>self::_parseCronNumbers($cron[2],1,31),
-                            'month'     =>self::_parseCronNumbers($cron[3],1,12),
-                            'dow'       =>self::_parseCronNumbers($cron[4],0,6),
-                        );
+                        'hours'     =>self::_parseCronNumbers($cron[1],0,23),
+                        'dom'       =>self::_parseCronNumbers($cron[2],1,31),
+                        'month'     =>self::_parseCronNumbers($cron[3],1,12),
+                        'dow'       =>self::_parseCronNumbers($cron[4],0,6),
+        );
         // limited to time()+366 - no need to check more than 1year ahead
         for($i=0;$i<=60*60*24*366;$i+=60){
             if( in_array(intval(date('j',$start+$i)),$date['dom']) &&
-                in_array(intval(date('n',$start+$i)),$date['month']) &&
-                in_array(intval(date('w',$start+$i)),$date['dow']) &&
-                in_array(intval(date('G',$start+$i)),$date['hours']) &&
-                in_array(intval(date('i',$start+$i)),$date['minutes'])
+                            in_array(intval(date('n',$start+$i)),$date['month']) &&
+                            in_array(intval(date('w',$start+$i)),$date['dow']) &&
+                            in_array(intval(date('G',$start+$i)),$date['hours']) &&
+                            in_array(intval(date('i',$start+$i)),$date['minutes'])
 
-                ){
-                    return $start+$i;
+            ){
+                return $start+$i;
             }
         }
         return null;

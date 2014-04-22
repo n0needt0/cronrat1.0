@@ -37,43 +37,35 @@ Super Awesome Nice &copy; 2014 cronrat.com
     Now you can deploy manually or via script.
     No need to use UI and nothing to configure.
 
-    To start monitoring your job simply call url (like in example below).
-    This will start counter, if url is not refreshed within preconfigured time,
-    you will get alerted.
+    To start monitoring your job simply call url via get or post (like in example below).
+    This will start counter and if url is not pulled next time as defined in CRONTAB you will get alerted.
 
-     such as this:
+<h2>API Definition</h2>
 
-    http(s)://cronrat.com/r/CRONRATKEY/JOBNAME ? [NEXTCHECK= minutes]&[EMAILTO=string]&[URLTO=string]&[ACTIVEON=string]
+    [POST or GET] http(s)://cronrat.com/r/CRONRATKEY/JOBNAME ? ..optional parameters
+
     <b>CRONRATKEY</b> (required) - cronrat key you receive for your account
     <b>JOBNAME</b> (required, max 256 char) - Unique (for your account) Alert name, alphanumeric URL encoded please
-    <b>NEXTCHECK</b> (optional) - a time MINUTES to wait for next check before alert (default 1440 = 24 hours).
-    <b>EMAILTO </b>(optional) - by default alert will be sent to registered email (paid accountscan overwrite it here)
+    <b>CRONTAB</b> (optional) - a url encoded unix CRONTAB command without script portion (default 0 0 * * * every day at midnight) or when url encoded (0+0+%2A+%2A+%2A)
+    <b>ALLOW</b> (optional) - seconds to allow before issue alert. minimum 300 (5min) maximum and default is 86400 (24 hours) so by default job needs to run at least once every 24hr.
+    <b>EMAILTO </b>(optional) - by default alert will be sent to registered email, this parameter allows for an alternative emal
     <b>URLTO</b>(optional) -  (paid accounts only) the url to pull http or https upon alert
-    <b>ACTIVEON</b> (optional) - a flag that allows "skipping" of a check on some weekdays.
-         defined as string of 7 day characters starting from Monday through Sunday "MTWTFSS" or (1111111)  where, if day character at position replaced with 0, the check will not run on that day.
-         Example MTWTF00 or 1111100 will only run on weekdays and skip saturday and sunday.
-         this is good for obs that do not run on say weekeds. Default is to run everyday.
-    <b>TOUTC</b> (optional) - Offset in seconds between your job's time zone and UTC, example for PST offset is 25200sec
+    <b>TOUTC</b> (optional) - Offset in hours between you and UTC, example for America/Los_Angeles offset is -7
 
     <b>IMPORTANT</b> please note all curl urls are enclosed in "quotes" to preserve special characters.
 
-    example urls:
+    <b>example urls:</b>b>
+
     curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww"
-    <i>will alert if job BackupMySQL not run in next 24 hours </i>
+    <i>will alert if job BackupMySQL does not run in next 25 hours (24hours plus 1hour to allow job finish) </i>
 
-    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net"
-    <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net (Note Url encoded @ is %40)</i>
+    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?CRONTAB={{urlencode('15 0 * * *')}}&EMAILTO={{ urlencode('4155551212@txt.att.net')}}"
+    <i>will alert if job BackupMySQL does not run 1 hour after 15 minutes past midnight (15 0 * * *) and will send email (sms) to 4155551212@txt.att.net (Note Url encoded @ is %40)</i>
 
-    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php"
-    <i>will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
-    and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
+    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?CRONTAB={{urlencode('15 0 * * *')}}&EMAILTO={{ urlencode('4155551212@txt.att.net')}}"&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php"
+    <i>same as above also will pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
 
-    curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww?NEXTCHECK=30&EMAILTO=4155551212%40txt.att.net&URLTO=http%3A%2F%2Fmyserver.com%2Frebootsql.php&ACTIVEON=MTWTF00&TOUTC=25200"
-    <i>Active only on weekdays and will alert if job BackupMySQL not run in next 30 minutes and will send email (sms) to 4155551212@txt.att.net
-    and pull url: http://myserver.com/rebootsql.php (Note Url is encoded)</i>
-
-
-3. Integration Into Various scripts
+<h2>Integration Into Various scripts</h2>
 
 From Crontab
 
@@ -84,7 +76,7 @@ Or you can used from inside of your scripts, just call Cronrat url
 //Bash Example
 curl "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww"
 
-PHP example
+//PHP example
 // create a new cURL resource
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, "http://cronrat.com/r/{{$cronrat_code}}/BackupMysqlWww");
@@ -114,16 +106,11 @@ you got the idea right??
 
 5. You can see all of your Cronrats using nice UI
 
-6. Free accounts get 10 cronrats, need more?? it is only $29 a year
-
 7. Cronrat will notify of failure 3 times., thereafter it will go dormant (and you will get 1 more cronrat available to you) and be deleted in 30 days. nothing to do for you.
 </pre>
 
 <h2>How do i get my Cronrat URl</h2>
 <p>Signup for service and you can have unlimited (almost) number of Cronrat URLs for all of your jobs.</p>
-
-<h2>Who uses Cronrat?</h2>
-<p>Sorry you had to ask, because we will not tell you, nor we sell their emails.</p>
 
 <h2>What technology did you use to build Cronrat?</h2>
 <p>Golang, REDIS, Laravel, MYSQL, PHP, JQuery Mobile and Phonegap</p>

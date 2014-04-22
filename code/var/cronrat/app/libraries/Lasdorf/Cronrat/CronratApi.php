@@ -169,16 +169,15 @@ Class CronratApi extends CronratBase{
         }
     }
 
-    private static function set_rat($ratkey, $ratname, $ttl, $email, $url, $activeon, $toutc)
+    private static function set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $nextrun)
     {
-        //pad ttl by minimum 5 minutes or 20% of %ttl to reduce flapping
-         $ttlpadding = ( floor($ttl/5) > 5)? $ttl + floor($ttl/5) : $ttl + 5;
 
+        echo "expires in " . floor($nextrun/ (24* 60 * 60));
          //set status key , this is signifies that rat is running
-         $r = self::store($ratkey . '::status::' . $ratname, time(), $ttl * 60 + ( floor($ttl/5) + 5) * 60);
+         $r = self::store($ratkey . '::status::' . $ratname, time(), $nextrun);
 
          //set specs array, this is what tells us what we expect should be alive and what to do if not
-         $spec = array('ttl'=>$ttl, 'email'=>$email, 'url'=>$url, 'activeon'=>$activeon, 'toutc'=>$toutc);
+         $spec = array('nextrun'=>$nextrun, 'email'=>$emailto, 'url'=>$urlto, 'crontab'=>$crontab, 'toutc'=>$toutc, 'allow'=>$allow);
 
          //this tracks specs of a job , these are alive for 30 days
 
@@ -208,14 +207,17 @@ Class CronratApi extends CronratBase{
     /**
      * @param string $ratkey
      * @param string $ratname
-     * @param number $ttlmin
-     * @param string $email
-     * @param string $url
-     * @throws Exception
+     * @param string $crontab
+     * @param string $allow
+     * @param string $toutc
+     * @param string $emailto
+     * @param string $urlto
+     * @param string $nextrun
+     * @throws \Exception
      * @return boolean
      */
 
-    public static function check_set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon, $toutc)
+    public static function check_set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $nextrun)
     {
         //this function sets rat key ast ttl and rat spec key at ttl of 48 hr.
         //this also sets index key as index::$ratkey = 1 of ttl of 48 hr
@@ -251,7 +253,6 @@ Class CronratApi extends CronratBase{
         }
 
         //this is new rat, so more work required
-
         $user_rats = self::get_account_live_rats($ratkey);
 
         if(count($user_rats) >= $acct['ratlimit'])
@@ -260,7 +261,9 @@ Class CronratApi extends CronratBase{
             return false;
         }
 
-        if($ttlmin < $acct['ttlmin'])
+        $nextrun = $nextrun - time();
+
+        if( $nextrun < $acct['ttlmin'] )
         {
             throw new \Exception("Time too short upgrade account");
             return false;
@@ -273,7 +276,7 @@ Class CronratApi extends CronratBase{
         }
 
         //set url
-        return self::set_rat($ratkey, $ratname, $ttlmin, $emailto, $urlto, $activeon, $toutc);
+        return self::set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $nextrun);
     }
 
     public static function get_expected_rats()
