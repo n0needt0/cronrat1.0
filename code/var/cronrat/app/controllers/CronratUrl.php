@@ -75,6 +75,13 @@ class CronratUrl extends BaseController {
             $toutc='0';
         }
 
+        $toutc = intval($toutc);
+
+        if(abs($toutc) > 14)
+        {
+            $toutc = 0;
+        }
+
         $params = array('crontab'=>$crontab, 'allow'=>$allow, 'emailto'=>$emailto, 'urlto'=>$urlto, 'toutc'=>$toutc);
 
         if($toutc == 0)
