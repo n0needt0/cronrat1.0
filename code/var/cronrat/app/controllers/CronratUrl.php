@@ -97,25 +97,27 @@ class CronratUrl extends BaseController {
 
         if($debug)
         {
-            echo "RATKEY: $ratkey</br>";
-            echo "RATNAME: $ratname</br>";
-            echo "CRONTAB: $crontab</br>";
-            echo "ALLOW: $allow</br>";
-            echo "URLTO: $urlto</br>";
-            echo "EMAILTO: $emailto</br>";
-            echo "TOUTC: $toutc</br>";
+            echo "****************\n";
+            echo "RATKEY: $ratkey</br>\n";
+            echo "RATNAME: $ratname</br>\n";
+            echo "CRONTAB: $crontab</br>\n";
+            echo "ALLOW: $allow</br>\n";
+            echo "URLTO: $urlto</br>\n";
+            echo "EMAILTO: $emailto</br>\n";
+            echo "TOUTC: $toutc</br>\n";
+            echo "****************\n";
         }
 
 
         if($debug)
         {
-            echo "LOCAL TIME " . date_default_timezone_get() . "</br>";
+            echo "LOCAL TIME " . date_default_timezone_get() . "</br>\n";
             echo "scheduled_lastrun: " . date('Y-m-d H:i:s', $scheduled_lastrun);
-            echo "</br>";
+            echo "</br> \n";
             echo "now: " . date('Y-m-d H:i:s', $now);
-            echo "</br>";
+            echo "</br> \n";
             echo "scheduled_nextrun: " . date('Y-m-d H:i:s', $scheduled_nextrun);
-            echo "</br>";
+            echo "</br> \n";
         }
         //now convert this stamps to UTC time
         date_default_timezone_set('UTC');
@@ -125,27 +127,28 @@ class CronratUrl extends BaseController {
 
         if($debug)
         {
-            echo "</br>UTC TIME </br>";
+            echo "</br>UTC TIME </br> \n";
             echo "scheduled_lastrun: " . date('Y-m-d H:i:s', $scheduled_lastrun);
-            echo "</br>";
+            echo "</br> \n";
             echo "now: " . date('Y-m-d H:i:s', $now);
-            echo "</br>";
+            echo "</br> \n";
             echo "scheduled_nextrun: " . date('Y-m-d H:i:s', $scheduled_nextrun);
-            echo "</br>";
+            echo "</br> \n";
         }
 
         try{
-            $res = Rat::check_set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $scheduled_nextrun + $allow);
+            $res = Rat::check_set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $scheduled_nextrun);
+
             if($res)
             {
-                echo "OK";
-                die;
+                echo "OK\n";
+                return;
             }
         }
         catch(Exception $e)
         {
             echo $e->getMessage();
-            die;
+            return;
         }
     }
 }

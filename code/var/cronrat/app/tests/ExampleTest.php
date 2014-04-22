@@ -1,19 +1,14 @@
 <?php
-
-class ExampleTest extends TestCase {
-
-	/**
-	 * A basic functional test example.
-	 *
-	 * @return void
-	 */
-	public function testBasicExample()
+/**
+class CronratUrlTest extends TestCase {
+	public function testBase()
 	{
-		$crawler = $this->client->request('GET', '/');
+		$crawler = $this->client->request('GET', '/r/coOSSWrq/MyTestRat?debug=1');
 
-		$this->assertTrue($this->client->getResponse()->isOk());
+		//$this->assertTrue($this->client->getResponse()->isOk());
 
-		$this->assertCount(1, $crawler->filter('h1:contains("Hello World!")'));
+		//$this->assertCount(1, $crawler->filter('RATKEY: coOSSWrq'));
 	}
 
 }
+*/

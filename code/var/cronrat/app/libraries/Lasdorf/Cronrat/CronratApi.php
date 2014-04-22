@@ -43,6 +43,24 @@ Class CronratApi extends CronratBase{
     }
 
     /**
+    * check for key in redis
+    * @param string $ratkey
+    */
+    public static function ttl($ratkey)
+    {
+        $result = Redis::ttl($ratkey);
+
+        if($result == false)
+        {
+            \Log::info("miss $ratkey");
+            return false;
+        }
+        \Log::info("hit $ratkey");
+        return $result;
+    }
+
+
+    /**
      * check for key in redis
      * @param string $ratkey
      */
@@ -69,7 +87,7 @@ Class CronratApi extends CronratBase{
              $res[$key] = self::lookup($key);
         }
         return $res;
-  }
+    }
 
     /**
      * Set key value in redis
@@ -171,10 +189,10 @@ Class CronratApi extends CronratBase{
 
     private static function set_rat($ratkey, $ratname, $crontab, $allow, $toutc, $emailto, $urlto, $nextrun)
     {
-
-        echo "expires in " . floor($nextrun/ (24* 60 * 60));
          //set status key , this is signifies that rat is running
-         $r = self::store($ratkey . '::status::' . $ratname, time(), $nextrun);
+         $ttl = $nextrun - time() + $allow;
+
+         $r = self::store($ratkey . '::status::' . $ratname, time(), $ttl);
 
          //set specs array, this is what tells us what we expect should be alive and what to do if not
          $spec = array('nextrun'=>$nextrun, 'email'=>$emailto, 'url'=>$urlto, 'crontab'=>$crontab, 'toutc'=>$toutc, 'allow'=>$allow);
@@ -261,9 +279,7 @@ Class CronratApi extends CronratBase{
             return false;
         }
 
-        $nextrun = $nextrun - time();
-
-        if( $nextrun < $acct['ttlmin'] )
+        if( ($nextrun - time()) < $acct['ttlmin'] )
         {
             throw new \Exception("Time too short upgrade account");
             return false;
