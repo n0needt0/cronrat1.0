@@ -116,7 +116,7 @@ class CronratUrl extends BaseController {
 
         if($debug)
         {
-            echo "****************\n";
+            echo "****************\n</br>";
             echo "RATKEY: $ratkey</br>\n";
             echo "RATNAME: $ratname</br>\n";
             echo "CRONTAB: $crontab</br>\n";
@@ -124,7 +124,7 @@ class CronratUrl extends BaseController {
             echo "URLTO: $urlto</br>\n";
             echo "EMAILTO: $emailto</br>\n";
             echo "TOUTC: $toutc</br>\n";
-            echo "****************\n";
+            echo "****************\n</br>";
         }
 
 
@@ -139,19 +139,19 @@ class CronratUrl extends BaseController {
             echo "</br> \n";
         }
         //now convert this stamps to UTC time
-        date_default_timezone_set('UTC');
-        $scheduled_lastrun = $cron->getPreviousRunDate()->getTimeStamp();
-        $now = time();
-        $scheduled_nextrun = $cron->getNextRunDate()->getTimeStamp();
+        //ate_default_timezone_set('UTC');
+        //$scheduled_lastrun = $cron->getPreviousRunDate()->getTimeStamp();
+        //$now = time();
+        //$scheduled_nextrun = $cron->getNextRunDate()->getTimeStamp();
 
         if($debug)
         {
-            echo "</br>UTC TIME </br> \n";
-            echo "scheduled_lastrun: " . date('Y-m-d H:i:s', $scheduled_lastrun);
+            echo "</br>ON UTC TIME </br> \n";
+            echo "scheduled_lastrun: " . date('Y-m-d H:i:s', $scheduled_lastrun + (60*60*(-1 * $toutc)));
             echo "</br> \n";
-            echo "now: " . date('Y-m-d H:i:s', $now);
+            echo "now: " . date('Y-m-d H:i:s', $now  + (60*60*(-1 * $toutc)));
             echo "</br> \n";
-            echo "scheduled_nextrun: " . date('Y-m-d H:i:s', $scheduled_nextrun);
+            echo "scheduled_nextrun: " . date('Y-m-d H:i:s', $scheduled_nextrun  + (60*60*(-1 * $toutc)));
             echo "</br> \n";
         }
 
