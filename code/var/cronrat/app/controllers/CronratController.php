@@ -54,7 +54,6 @@ class CronratController extends BaseController {
  		        $res[$expected_match]['cronrat_name'] = $expected_match;
  		        $res[$expected_match]['ts'] = false;
  		        $res[$expected_match]['active'] = 0;
- 		        $res[$expected_match]['nextcheck'] = 0;
  		        $res[$expected_match]['cronrat_code'] = $user->cronrat_code . '::::' . $expected_match;
 
  		        foreach($live as $lk=>$lv)
@@ -66,7 +65,6 @@ class CronratController extends BaseController {
                     {
                         //rat is live and well
                         $res[$expected_match]['ts'] = $lv;
-                        $res[$expected_match]['nextcheck'] = $lv + $res[$expected_match]['ttl'] * 60;
                         $res[$expected_match]['active'] = 1;
                     }
  		        }

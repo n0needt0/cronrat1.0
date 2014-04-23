@@ -6,8 +6,20 @@ class CronratUrl extends BaseController {
 
     //start job
 
-    public function getCr($ratkey=false, $ratname=false)
+    public function getCr($ratkey=false)
     {
+        if(Input::has('rat'))
+        {
+            $ratname = Input::Get('rat');
+        }
+        elseif(Input::has('RAT'))
+        {
+            $ratname = Input::Get('RAT');
+        }
+        else
+        {
+            $ratname=false;
+        }
 
         if(Input::has('debug'))
         {
