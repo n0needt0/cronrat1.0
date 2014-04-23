@@ -45,7 +45,7 @@ $(document).on("pagecreate", function (e) {
 <div id='info' class="ui-body alert-info">
 @if(empty($rats))
 <h4>Where are my rats?</h4>
-<h4>To test installation click <a href=" {{Config::get('app.url')}}/r/{{$cronrat_code}}?rat=My Test Rat" target="_new" > {{Config::get('app.url')}}/r/coOSSWrq?rat=My Test Rat</a></h4>
+<h4>To test installation click <a href=" {{Config::get('app.url')}}/r/{{$cronrat_code}}?rat=My Test Rat" target="_new" > {{Config::get('app.url')}}/r/{{$cronrat_code}}?rat=My Test Rat</a></h4>
 <h4>Note the URL and make sure page displays OK, then refresh this page</h4>
 <h4>read FAQ on how to use Cronrat</h4>
 @endif
