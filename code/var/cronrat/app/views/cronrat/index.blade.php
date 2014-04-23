@@ -66,7 +66,7 @@ $(document).on("pagecreate", function (e) {
 
         @foreach ($rats as $rat)
         <li>
-        <a href="#popupRat" data-rel="popup" data-transition="slideup" class="ratId" id="{{ $rat['cronrat_code'] }}" ref="{{ Config::get('app.url')}}/r/{{ str_replace('::::','/',$rat['cronrat_code'])}}?CRONTAB={{$rat['crontab']}}{{(empty($rat['email']))?'':'&EMAILTO='.urlencode($rat['email'])}}{{ (empty($rat['url']))?'':'&URLTO='. urlencode($rat['url'])}}{{ (empty($rat['toutc']))?'':'&TOUTC='. urlencode($rat['toutc'])}}"> <img  id="{{ $rat['cronrat_code'] }}_img" src="/assets/images/{{ $rat['active'] }}.png" alt="ok" class="ui-li-icon ui-corner-none"/>
+        <a href="#popupRat" data-rel="popup" data-transition="slideup" class="ratId" id="{{ $rat['cronrat_code'] }}" ref="{{ Config::get('app.url')}}/r/{{ str_replace('::::','/',$rat['cronrat_code'])}}?CRONTAB={{$rat['ttl']}}{{(empty($rat['email']))?'':'&EMAILTO='.urlencode($rat['email'])}}{{ (empty($rat['url']))?'':'&URLTO='. urlencode($rat['url'])}}{{ (empty($rat['toutc']))?'':'&TOUTC='. urlencode($rat['toutc'])}}"> <img  id="{{ $rat['cronrat_code'] }}_img" src="/assets/images/{{ $rat['active'] }}.png" alt="ok" class="ui-li-icon ui-corner-none"/>
         as of {{ date('m/d h:i T', $rat['ts']) }} |
         {{ (empty($rat['nextcheck']))?'': 'next ' . date('m/d h:i T', $rat['nextcheck']) }} | {{ $rat['cronrat_name'] }}</a></li>
         @endforeach
