@@ -1,8 +1,6 @@
 server {
     listen 0.0.0.0:80 default deferred;
     server_name ix.cronrat.net;
-    access_log /var/log/nginx/cronrat_access.log;
-    error_log /var/log/nginx/cronrat_error.log;
     
     sendfile off;
 
@@ -54,7 +52,7 @@ server {
                         fastcgi_cache_valid 200 10s;
                         fastcgi_max_temp_file_size 1M;
                         fastcgi_cache_use_stale updating;
-                        fastcgi_pass localhost:9000;
+                        #fastcgi_pass localhost:9000;
                         fastcgi_pass_header Set-Cookie;
                         fastcgi_pass_header Cookie;
                         fastcgi_ignore_headers Cache-Control Expires Set-Cookie;        
